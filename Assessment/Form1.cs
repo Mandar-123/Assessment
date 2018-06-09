@@ -15,7 +15,7 @@ namespace Assessment
 {
     public partial class Form1 : Form
     {
-        int sid = 1;
+        int sid = 2;
         int total_entries = 1;
         int txtBoxStartPosition = 50;
         int txtBoxStartPositionV = 25;
@@ -87,12 +87,18 @@ namespace Assessment
                 chkd = Int32.Parse(txtBox.Text);
                 txtBox = panel1.Controls["tchkd_" + i.ToString()] as TextBox;
                 if (txtBox.Text == "")
+                {
                     tchkd = 0;
+                    txtBox.Text = "0";
+                }
                 else
                     tchkd = Int32.Parse(txtBox.Text);
                 txtBox = panel1.Controls["alloc_" + i.ToString()] as TextBox;
                 if (txtBox.Text == "")
+                {
                     alloc = 0;
+                    txtBox.Text = "0";
+                }
                 else
                     alloc = Int32.Parse(txtBox.Text);
 
@@ -185,7 +191,17 @@ namespace Assessment
             else
                 alloc = Int32.Parse(txtBox.Text);
 
+            if (ass == "")
+            {
+                MessageBox.Show("Please Enter Assessor's Name!", "Alert!");
+                return;
+            }
 
+            if (chkd < tchkd)
+            {
+                MessageBox.Show("Papers checked today cannot be less than total papers!", "Alert!");
+                return;
+            }
             sql = "INSERT into allocation (sid, id, assessor, moderator, allocated, checked, todayChecked) values (" + sid + ", " + total_entries + ", '" + ass + "', '" + mod + "', " + alloc + ", " + chkd + ", " + tchkd + ");";
             command = new SQLiteCommand(sql, m_dbConnection);
             command.ExecuteNonQuery();
@@ -237,7 +253,7 @@ namespace Assessment
                 txtBoxStartPositionV += 30;
                 total_entries++;
             }
-
+            m_dbConnection.Close();
             newPanel.Location = new Point(0, txtBoxStartPositionV);
         }
     }
