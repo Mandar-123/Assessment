@@ -76,7 +76,14 @@ namespace Assessment
 
         private void save_but_Click(object sender, EventArgs e)
         {
-            int sumChecked = 0, sumAllocated = 0, sumTodayChecked = 0; 
+            int sumChecked = 0, sumAllocated = 0, sumTodayChecked = 0;
+            string mDbPath = Application.StartupPath + "/paperassessment.db";
+            SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + mDbPath + ";Version=3;");
+            m_dbConnection.Open();
+
+            string sql;
+            SQLiteCommand command;
+
             for (int i = 1; i < total_entries; i++)
             {
                 string ass, mod;
@@ -104,16 +111,7 @@ namespace Assessment
                 else
                     alloc = Int32.Parse(txtBox.Text);
 
-                string mDbPath = Application.StartupPath + "/paperassessment.db";
-                if (!File.Exists(mDbPath))
-                {
-                    SQLiteConnection.CreateFile(mDbPath);
-                }
-
-                SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + mDbPath + ";Version=3;");
-                m_dbConnection.Open();
-                string sql;
-                SQLiteCommand command;
+                
                 sql = "SELECT todayChecked FROM allocation WHERE sid = " + sid + " AND id = " + i + ";";
                 command = new SQLiteCommand(sql, m_dbConnection);
                 SQLiteDataReader reader = command.ExecuteReader();
@@ -128,15 +126,31 @@ namespace Assessment
                 if (chkd > alloc)
                 {
                     MessageBox.Show("Total Papers checked cannot be greater than Total papers allocated!", "Alert!");
+                    txtBox = panel1.Controls["tchkd_" + i.ToString()] as TextBox;
+                    txtBox.Focus();
                     return;
                 }
 
                 sql = "UPDATE allocation SET assessor = '" + ass + "', moderator = '" + mod + "', allocated = " + alloc + ", checked = " + chkd + ", todayChecked = " + tchkd + " WHERE sid =" + sid + " AND id = " + i + ";";
                 command = new SQLiteCommand(sql, m_dbConnection);
-                command.ExecuteNonQuery();
+
+                try
+                {
+                    command.ExecuteNonQuery();
+                }
+                catch (System.Exception ex)
+                {
+                    if (ex.Message.Contains("UNIQUE"))
+                        MessageBox.Show("Faculty named '"+ ass + "' Already Exists!", "Alert!");
+                    m_dbConnection.Close();
+                    txtBox = panel1.Controls["ass_" + i.ToString()] as TextBox;
+                    txtBox.Focus();
+                    return;
+                }
                 txtBox = panel1.Controls["chkd_" + i.ToString()] as TextBox;
                 txtBox.Text = chkd.ToString();
             }
+            m_dbConnection.Close();
             sumC.Text = sumChecked.ToString();
             sumA.Text = sumAllocated.ToString();
             sumT.Text = sumTodayChecked.ToString();
@@ -175,10 +189,6 @@ namespace Assessment
             SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + mDbPath + ";Version=3;");
             m_dbConnection.Open();
 
-            string sql = "CREATE TABLE IF NOT EXISTS allocation (sid int, id int, assessor varchar(50), moderator varchar(50), allocated int, checked int, todayChecked int);";
-            SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
-            command.ExecuteNonQuery();
-
             string ass, mod;
             int alloc, chkd, tchkd;
             TextBox txtBox = newPanel.Controls["new_ass"] as TextBox;
@@ -204,28 +214,29 @@ namespace Assessment
             if (ass == "")
             {
                 MessageBox.Show("Please Enter Assessor's Name!", "Alert!");
+                txtBox = newPanel.Controls["new_ass"] as TextBox;
+                txtBox.Focus();
                 return;
             }
 
             if (chkd < tchkd)
             {
                 MessageBox.Show("Papers checked today cannot be less than Total papers Checked!", "Alert!");
+                txtBox = newPanel.Controls["new_chkd"] as TextBox;
+                txtBox.Focus();
                 return;
             }
 
             if (alloc < chkd)
             {
                 MessageBox.Show("Total papers checked cannot be greater than Total papers Allocated!", "Alert!");
+                txtBox = newPanel.Controls["new_chkd"] as TextBox;
+                txtBox.Focus();
                 return;
             }
-            new_ass.Text = "";
-            new_mod.Text = "";
-            new_chkd.Text = "";
-            new_tchkd.Text = "";
-            new_alloc.Text = "";
 
-            sql = "INSERT into allocation (sid, id, assessor, moderator, allocated, checked, todayChecked) values (" + sid + ", " + total_entries + ", '" + ass + "', '" + mod + "', " + alloc + ", " + chkd + ", " + tchkd + ");";
-            command = new SQLiteCommand(sql, m_dbConnection);
+            string sql = "INSERT into allocation (sid, id, assessor, moderator, allocated, checked, todayChecked) values (" + sid + ", " + total_entries + ", '" + ass + "', '" + mod + "', " + alloc + ", " + chkd + ", " + tchkd + ");";
+            SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
             try
             {
                 command.ExecuteNonQuery();
@@ -233,8 +244,17 @@ namespace Assessment
             catch(System.Exception ex)
             {
                 if(ex.Message.Contains("UNIQUE"))
-                    MessageBox.Show("Faculty Already Exists!", "Alert!");
+                    MessageBox.Show("Faculty named '" + ass + "' Already Exists!", "Alert!");
+                txtBox = newPanel.Controls["new_ass"] as TextBox;
+                txtBox.Focus();
+                m_dbConnection.Close();
+                return;
             }
+            new_ass.Text = "";
+            new_mod.Text = "";
+            new_chkd.Text = "";
+            new_tchkd.Text = "";
+            new_alloc.Text = "";
             m_dbConnection.Close();
             load();
             save_but_Click(sender, e);
