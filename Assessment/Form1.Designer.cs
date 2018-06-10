@@ -30,6 +30,9 @@
         {
             this.panel1 = new System.Windows.Forms.Panel();
             this.newPanel = new System.Windows.Forms.Panel();
+            this.sumT = new System.Windows.Forms.Label();
+            this.sumC = new System.Windows.Forms.Label();
+            this.sumA = new System.Windows.Forms.Label();
             this.addNew = new System.Windows.Forms.Button();
             this.new_tchkd = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -45,7 +48,7 @@
             // panel1
             // 
             this.panel1.AutoScroll = true;
-            this.panel1.BackColor = System.Drawing.Color.OldLace;
+            this.panel1.BackColor = System.Drawing.Color.Honeydew;
             this.panel1.Controls.Add(this.newPanel);
             this.panel1.Location = new System.Drawing.Point(75, 49);
             this.panel1.Margin = new System.Windows.Forms.Padding(0);
@@ -55,6 +58,9 @@
             // 
             // newPanel
             // 
+            this.newPanel.Controls.Add(this.sumT);
+            this.newPanel.Controls.Add(this.sumC);
+            this.newPanel.Controls.Add(this.sumA);
             this.newPanel.Controls.Add(this.addNew);
             this.newPanel.Controls.Add(this.new_tchkd);
             this.newPanel.Controls.Add(this.label1);
@@ -68,6 +74,33 @@
             this.newPanel.Name = "newPanel";
             this.newPanel.Size = new System.Drawing.Size(1084, 118);
             this.newPanel.TabIndex = 1;
+            // 
+            // sumT
+            // 
+            this.sumT.AutoSize = true;
+            this.sumT.Font = new System.Drawing.Font("Arial", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.sumT.Location = new System.Drawing.Point(959, 38);
+            this.sumT.Name = "sumT";
+            this.sumT.Size = new System.Drawing.Size(0, 17);
+            this.sumT.TabIndex = 10;
+            // 
+            // sumC
+            // 
+            this.sumC.AutoSize = true;
+            this.sumC.Font = new System.Drawing.Font("Arial", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.sumC.Location = new System.Drawing.Point(650, 38);
+            this.sumC.Name = "sumC";
+            this.sumC.Size = new System.Drawing.Size(0, 17);
+            this.sumC.TabIndex = 9;
+            // 
+            // sumA
+            // 
+            this.sumA.AutoSize = true;
+            this.sumA.Font = new System.Drawing.Font("Arial", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.sumA.Location = new System.Drawing.Point(831, 38);
+            this.sumA.Name = "sumA";
+            this.sumA.Size = new System.Drawing.Size(0, 17);
+            this.sumA.TabIndex = 8;
             // 
             // addNew
             // 
@@ -177,6 +210,9 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox new_tchkd;
         private System.Windows.Forms.Button addNew;
+        private System.Windows.Forms.Label sumT;
+        private System.Windows.Forms.Label sumC;
+        private System.Windows.Forms.Label sumA;
     }
 }
 

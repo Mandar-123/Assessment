@@ -15,7 +15,7 @@ namespace Assessment
 {
     public partial class Form1 : Form
     {
-        int sid = 2;
+        int sid = 1;
         int total_entries = 1;
         int txtBoxStartPosition = 50;
         int txtBoxStartPositionV = 25;
@@ -32,12 +32,13 @@ namespace Assessment
 
             panel1.Controls.Add(makeLabel(txtBoxStartPosition, txtBoxStartPositionV, 250, "Assessor"));
             panel1.Controls.Add(makeLabel(txtBoxStartPosition + 250 + d, txtBoxStartPositionV, 250, "Moderator"));
-            panel1.Controls.Add(makeLabel(txtBoxStartPosition + 490 + 2 * d, txtBoxStartPositionV, 75, "Checked"));
+            panel1.Controls.Add(makeLabel(txtBoxStartPosition + 465 + 2 * d, txtBoxStartPositionV, 100, "Total Checked"));
             panel1.Controls.Add(makeLabel(txtBoxStartPosition + 575 + 3 * d, txtBoxStartPositionV, 10, "/"));
             panel1.Controls.Add(makeLabel(txtBoxStartPosition + 575 + 4 * d, txtBoxStartPositionV, 75, "Allocated"));
             panel1.Controls.Add(makeLabel(txtBoxStartPosition + 650 + 5 * d, txtBoxStartPositionV, 120, "Checked Today"));
             txtBoxStartPositionV += 30;
             load();
+            save_but_Click(sender, e);
         }
 
         public static TextBox makeBox(int xLoc, int yLoc, int xSize, string t,string name, bool enabled, bool isNumber)
@@ -75,6 +76,7 @@ namespace Assessment
 
         private void save_but_Click(object sender, EventArgs e)
         {
+            int sumChecked = 0, sumAllocated = 0, sumTodayChecked = 0; 
             for (int i = 1; i < total_entries; i++)
             {
                 string ass, mod;
@@ -119,12 +121,25 @@ namespace Assessment
                 while (reader.Read())
                     actual_add = tchkd - (int)reader["todayChecked"];
                 chkd = chkd + actual_add;
+                sumTodayChecked += tchkd;
+                sumChecked += chkd;
+                sumAllocated += alloc;
+
+                if (chkd > alloc)
+                {
+                    MessageBox.Show("Total Papers checked cannot be greater than Total papers allocated!", "Alert!");
+                    return;
+                }
+
                 sql = "UPDATE allocation SET assessor = '" + ass + "', moderator = '" + mod + "', allocated = " + alloc + ", checked = " + chkd + ", todayChecked = " + tchkd + " WHERE sid =" + sid + " AND id = " + i + ";";
                 command = new SQLiteCommand(sql, m_dbConnection);
                 command.ExecuteNonQuery();
                 txtBox = panel1.Controls["chkd_" + i.ToString()] as TextBox;
                 txtBox.Text = chkd.ToString();
             }
+            sumC.Text = sumChecked.ToString();
+            sumA.Text = sumAllocated.ToString();
+            sumT.Text = sumTodayChecked.ToString();
         }
 
         private void new_chkd_TextChanged(object sender, EventArgs e)
@@ -157,11 +172,6 @@ namespace Assessment
         private void addNew_Click(object sender, EventArgs e)
         {
             string mDbPath = Application.StartupPath + "/paperassessment.db";
-            if (!File.Exists(mDbPath))
-            {
-                SQLiteConnection.CreateFile(mDbPath);
-            }
-
             SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + mDbPath + ";Version=3;");
             m_dbConnection.Open();
 
@@ -199,20 +209,35 @@ namespace Assessment
 
             if (chkd < tchkd)
             {
-                MessageBox.Show("Papers checked today cannot be less than total papers!", "Alert!");
+                MessageBox.Show("Papers checked today cannot be less than Total papers Checked!", "Alert!");
                 return;
             }
-            sql = "INSERT into allocation (sid, id, assessor, moderator, allocated, checked, todayChecked) values (" + sid + ", " + total_entries + ", '" + ass + "', '" + mod + "', " + alloc + ", " + chkd + ", " + tchkd + ");";
-            command = new SQLiteCommand(sql, m_dbConnection);
-            command.ExecuteNonQuery();
-            m_dbConnection.Close();
-            load();
 
+            if (alloc < chkd)
+            {
+                MessageBox.Show("Total papers checked cannot be greater than Total papers Allocated!", "Alert!");
+                return;
+            }
             new_ass.Text = "";
             new_mod.Text = "";
             new_chkd.Text = "";
             new_tchkd.Text = "";
             new_alloc.Text = "";
+
+            sql = "INSERT into allocation (sid, id, assessor, moderator, allocated, checked, todayChecked) values (" + sid + ", " + total_entries + ", '" + ass + "', '" + mod + "', " + alloc + ", " + chkd + ", " + tchkd + ");";
+            command = new SQLiteCommand(sql, m_dbConnection);
+            try
+            {
+                command.ExecuteNonQuery();
+            }
+            catch(System.Exception ex)
+            {
+                if(ex.Message.Contains("UNIQUE"))
+                    MessageBox.Show("Faculty Already Exists!", "Alert!");
+            }
+            m_dbConnection.Close();
+            load();
+            save_but_Click(sender, e);
         }
 
         public void load() {
@@ -226,7 +251,7 @@ namespace Assessment
             SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + mDbPath + ";Version=3;");
             m_dbConnection.Open();
 
-            string sql = "CREATE TABLE IF NOT EXISTS allocation (sid int, id int, assessor varchar(50), moderator varchar(50), allocated int, checked int, todayChecked int);";
+            string sql = "CREATE TABLE IF NOT EXISTS allocation (sid int, id int, assessor varchar(50), moderator varchar(50), allocated int, checked int, todayChecked int, PRIMARY KEY(sid, id), UNIQUE(sid, assessor));";
 
             SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
             command.ExecuteNonQuery();
