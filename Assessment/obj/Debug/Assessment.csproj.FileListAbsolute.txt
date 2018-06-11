@@ -17,3 +17,4 @@ F:\Projects\VisualStudioProjects\Assessment\Assessment\obj\Debug\Assessment.cspr
 F:\Projects\VisualStudioProjects\Assessment\Assessment\obj\Debug\Assessment.csproj.CoreCompileInputs.cache
 F:\Projects\VisualStudioProjects\Assessment\Assessment\obj\Debug\Assessment.exe
 F:\Projects\VisualStudioProjects\Assessment\Assessment\obj\Debug\Assessment.pdb
+F:\Projects\VisualStudioProjects\Assessment\Assessment\obj\Debug\Assessment.Form0.resources

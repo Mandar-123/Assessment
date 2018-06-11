@@ -41,6 +41,7 @@
             this.new_mod = new System.Windows.Forms.TextBox();
             this.new_ass = new System.Windows.Forms.TextBox();
             this.save_but = new System.Windows.Forms.Button();
+            this.backBut = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.newPanel.SuspendLayout();
             this.SuspendLayout();
@@ -48,12 +49,13 @@
             // panel1
             // 
             this.panel1.AutoScroll = true;
-            this.panel1.BackColor = System.Drawing.Color.Honeydew;
+            this.panel1.BackColor = System.Drawing.Color.LavenderBlush;
+            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel1.Controls.Add(this.newPanel);
-            this.panel1.Location = new System.Drawing.Point(75, 49);
+            this.panel1.Location = new System.Drawing.Point(75, 77);
             this.panel1.Margin = new System.Windows.Forms.Padding(0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1216, 648);
+            this.panel1.Size = new System.Drawing.Size(1216, 620);
             this.panel1.TabIndex = 0;
             // 
             // newPanel
@@ -180,12 +182,24 @@
             this.save_but.UseVisualStyleBackColor = false;
             this.save_but.Click += new System.EventHandler(this.save_but_Click);
             // 
+            // backBut
+            // 
+            this.backBut.BackColor = System.Drawing.Color.LightPink;
+            this.backBut.Location = new System.Drawing.Point(28, 12);
+            this.backBut.Name = "backBut";
+            this.backBut.Size = new System.Drawing.Size(44, 30);
+            this.backBut.TabIndex = 1;
+            this.backBut.Text = "<--";
+            this.backBut.UseVisualStyleBackColor = false;
+            this.backBut.Click += new System.EventHandler(this.backBut_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(1350, 729);
+            this.Controls.Add(this.backBut);
             this.Controls.Add(this.panel1);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -213,6 +227,7 @@
         private System.Windows.Forms.Label sumT;
         private System.Windows.Forms.Label sumC;
         private System.Windows.Forms.Label sumA;
+        private System.Windows.Forms.Button backBut;
     }
 }
 

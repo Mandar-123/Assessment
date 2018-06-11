@@ -15,21 +15,30 @@ namespace Assessment
 {
     public partial class Form1 : Form
     {
-        int sid = 1;
-        int total_entries = 1;
-        int txtBoxStartPosition = 50;
+        int sid;
+        int total_entries;
+        int txtBoxStartPosition;
         int txtBoxStartPositionV = 25;
-        int d = 48;
+        int d;
+        string name;
+        string sem;
 
-        public Form1()
+        public Form1(int sid, string name, string sem)
         {
             InitializeComponent();
+            this.sid = sid;
+            this.name = name;
+            this.total_entries = 1;
+            this.txtBoxStartPosition = 50;
+            this.txtBoxStartPositionV = 25;
+            this.d = 48;
+            this.sem = sem;
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             this.WindowState = FormWindowState.Maximized;
-
+            this.Controls.Add(makeLabel(75, 40, 400, name + " (" + sem + ")"));
             panel1.Controls.Add(makeLabel(txtBoxStartPosition, txtBoxStartPositionV, 250, "Assessor"));
             panel1.Controls.Add(makeLabel(txtBoxStartPosition + 250 + d, txtBoxStartPositionV, 250, "Moderator"));
             panel1.Controls.Add(makeLabel(txtBoxStartPosition + 465 + 2 * d, txtBoxStartPositionV, 100, "Total Checked"));
@@ -39,6 +48,7 @@ namespace Assessment
             txtBoxStartPositionV += 30;
             load();
             save_but_Click(sender, e);
+            //once();
         }
 
         public static TextBox makeBox(int xLoc, int yLoc, int xSize, string t,string name, bool enabled, bool isNumber)
@@ -301,5 +311,17 @@ namespace Assessment
             m_dbConnection.Close();
             newPanel.Location = new Point(0, txtBoxStartPositionV);
         }
+
+        private void backBut_Click(object sender, EventArgs e)
+        {
+            Form0 fr = new Form0();
+            this.Hide();
+            fr.ShowDialog();
+            this.Close();
+        }
+
+        /*
+        
+        */
     }
 }
