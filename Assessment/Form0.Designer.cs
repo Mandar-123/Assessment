@@ -32,7 +32,7 @@
             this.subSelect = new System.Windows.Forms.ComboBox();
             this.button1 = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.button2 = new System.Windows.Forms.Button();
+            this.printReport = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel2.SuspendLayout();
             this.SuspendLayout();
@@ -78,16 +78,17 @@
             this.panel1.Size = new System.Drawing.Size(2, 518);
             this.panel1.TabIndex = 3;
             // 
-            // button2
+            // printReport
             // 
-            this.button2.BackColor = System.Drawing.Color.LightGreen;
-            this.button2.Font = new System.Drawing.Font("Arial", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button2.Location = new System.Drawing.Point(1209, 24);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(93, 60);
-            this.button2.TabIndex = 4;
-            this.button2.Text = "Generate Report";
-            this.button2.UseVisualStyleBackColor = false;
+            this.printReport.BackColor = System.Drawing.Color.LightGreen;
+            this.printReport.Font = new System.Drawing.Font("Arial", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.printReport.Location = new System.Drawing.Point(1209, 24);
+            this.printReport.Name = "printReport";
+            this.printReport.Size = new System.Drawing.Size(93, 60);
+            this.printReport.TabIndex = 4;
+            this.printReport.Text = "Generate Report";
+            this.printReport.UseVisualStyleBackColor = false;
+            this.printReport.Click += new System.EventHandler(this.printReport_Click);
             // 
             // panel2
             // 
@@ -107,7 +108,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1350, 729);
             this.Controls.Add(this.panel2);
-            this.Controls.Add(this.button2);
+            this.Controls.Add(this.printReport);
             this.Controls.Add(this.panel1);
             this.Name = "Form0";
             this.Text = "Form0";
@@ -123,7 +124,7 @@
         private System.Windows.Forms.ComboBox subSelect;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button printReport;
         private System.Windows.Forms.Panel panel2;
     }
 }

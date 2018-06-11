@@ -72,9 +72,28 @@ namespace Assessment
             this.Close();
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void printReport_Click(object sender, EventArgs e)
         {
+            /*
+             * 
+             * 
+             *  PRINT LOGIC
+             *  
+             *  
+             *  
+            */
 
+            string mDbPath = Application.StartupPath + "/paperassessment.db";
+            SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + mDbPath + ";Version=3;");
+            m_dbConnection.Open();
+
+            string sql = "UPDATE allocation SET todayChecked = 0;";
+            SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
+            command.ExecuteNonQuery();
+            sql = "UPDATE subject SET  todayDone = 0;";
+            command = new SQLiteCommand(sql, m_dbConnection);
+            command.ExecuteNonQuery();
+            m_dbConnection.Close();
         }
     }
 }
