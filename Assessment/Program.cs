@@ -80,6 +80,10 @@ namespace Assessment
             exec(sql);
             sql = "INSERT INTO subject (id, name, sem, todayDone) VALUES (20, 'Department Level Optional Course 2', 6, 0);";
             exec(sql);
+
+            sql = "CREATE TABLE IF NOT EXISTS allocation (sid int, id int, assessor varchar(50), moderator varchar(50), allocated int, checked int, todayChecked int, PRIMARY KEY(sid, id), UNIQUE(sid, assessor));";
+            command = new SQLiteCommand(sql, m_dbConnection);
+            command.ExecuteNonQuery();
         }
 
         static void exec(string sql)
