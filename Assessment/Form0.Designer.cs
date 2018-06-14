@@ -34,6 +34,7 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.printReport = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.panel3 = new System.Windows.Forms.Panel();
             this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -55,7 +56,7 @@
             this.subSelect.FormattingEnabled = true;
             this.subSelect.Location = new System.Drawing.Point(38, 112);
             this.subSelect.Name = "subSelect";
-            this.subSelect.Size = new System.Drawing.Size(290, 25);
+            this.subSelect.Size = new System.Drawing.Size(364, 25);
             this.subSelect.TabIndex = 1;
             // 
             // button1
@@ -97,16 +98,25 @@
             this.panel2.Controls.Add(this.semSelect);
             this.panel2.Controls.Add(this.subSelect);
             this.panel2.Controls.Add(this.button1);
-            this.panel2.Location = new System.Drawing.Point(215, 204);
+            this.panel2.Location = new System.Drawing.Point(154, 204);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(366, 245);
+            this.panel2.Size = new System.Drawing.Size(437, 245);
             this.panel2.TabIndex = 5;
+            // 
+            // panel3
+            // 
+            this.panel3.BackColor = System.Drawing.Color.LavenderBlush;
+            this.panel3.Location = new System.Drawing.Point(740, 204);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(500, 245);
+            this.panel3.TabIndex = 6;
             // 
             // Form0
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1350, 729);
+            this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.printReport);
             this.Controls.Add(this.panel1);
@@ -126,5 +136,6 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button printReport;
         private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Panel panel3;
     }
 }

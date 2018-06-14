@@ -308,20 +308,22 @@ namespace Assessment
                 txtBoxStartPositionV += 30;
                 total_entries++;
             }
+
+            sql = "UPDATE subject SET todayDone = 1 where id = " + sid + ";";
+
+            command = new SQLiteCommand(sql, m_dbConnection);
+            command.ExecuteNonQuery();
+
             m_dbConnection.Close();
             newPanel.Location = new Point(0, txtBoxStartPositionV);
         }
 
         private void backBut_Click(object sender, EventArgs e)
         {
-            Form0 fr = new Form0();
+            Form0 fr = new Form0(sem);
             this.Hide();
             fr.ShowDialog();
             this.Close();
         }
-
-        /*
-        
-        */
     }
 }
