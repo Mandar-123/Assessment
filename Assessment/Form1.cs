@@ -20,10 +20,12 @@ namespace Assessment
         int txtBoxStartPosition;
         int txtBoxStartPositionV = 25;
         int d;
+        int total;
         string name;
         string sem;
-
-        public Form1(int sid, string name, string sem)
+        string mDbPath;
+        string acedemicYear, exam, branch;
+        public Form1(int sid, string name, string sem, string dbPath, string ay, string ex, string br, int ttc)
         {
             InitializeComponent();
             this.sid = sid;
@@ -33,6 +35,11 @@ namespace Assessment
             this.txtBoxStartPositionV = 25;
             this.d = 48;
             this.sem = sem;
+            this.mDbPath = dbPath;
+            this.acedemicYear = ay;
+            this.exam = ex;
+            this.branch = br;
+            this.total = ttc; 
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -46,9 +53,14 @@ namespace Assessment
             panel1.Controls.Add(makeLabel(txtBoxStartPosition + 575 + 4 * d, txtBoxStartPositionV, 75, "Allocated"));
             panel1.Controls.Add(makeLabel(txtBoxStartPosition + 650 + 5 * d, txtBoxStartPositionV, 120, "Checked Today"));
             txtBoxStartPositionV += 30;
+            SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + mDbPath + ";Version=3;");
+            m_dbConnection.Open();
+            string sql = "UPDATE subject SET total = " + total + " where id = " + sid + ";";
+            SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
+            command.ExecuteNonQuery();
+            m_dbConnection.Close();
             load();
             save_but_Click(sender, e);
-            //once();
         }
 
         public static TextBox makeBox(int xLoc, int yLoc, int xSize, string t,string name, bool enabled, bool isNumber)
@@ -87,7 +99,6 @@ namespace Assessment
         private void save_but_Click(object sender, EventArgs e)
         {
             int sumChecked = 0, sumAllocated = 0, sumTodayChecked = 0;
-            string mDbPath = Application.StartupPath + "/paperassessment.db";
             SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + mDbPath + ";Version=3;");
             m_dbConnection.Open();
 
@@ -164,6 +175,7 @@ namespace Assessment
             sumC.Text = sumChecked.ToString();
             sumA.Text = sumAllocated.ToString();
             sumT.Text = sumTodayChecked.ToString();
+            rem.Text = "To be allocated: " + (total - sumAllocated).ToString();
         }
 
         private void new_chkd_TextChanged(object sender, EventArgs e)
@@ -195,7 +207,6 @@ namespace Assessment
 
         private void addNew_Click(object sender, EventArgs e)
         {
-            string mDbPath = Application.StartupPath + "/paperassessment.db";
             SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + mDbPath + ";Version=3;");
             m_dbConnection.Open();
 
@@ -270,25 +281,14 @@ namespace Assessment
             save_but_Click(sender, e);
         }
 
-        public void load() {
-
-            string mDbPath = Application.StartupPath + "/paperassessment.db";
-            if (!File.Exists(mDbPath))
-            {
-                SQLiteConnection.CreateFile(mDbPath);
-            }
-
+        public void load()
+        {
             SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + mDbPath + ";Version=3;");
             m_dbConnection.Open();
-
-            string sql = "CREATE TABLE IF NOT EXISTS allocation (sid int, id int, assessor varchar(50), moderator varchar(50), allocated int, checked int, todayChecked int, PRIMARY KEY(sid, id), UNIQUE(sid, assessor));";
+            
+            string sql = "SELECT * FROM allocation where sid = " + sid + " AND id >= " + total_entries + " ORDER BY id";
 
             SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
-            command.ExecuteNonQuery();
-
-            sql = "SELECT * FROM allocation where sid = " + sid + " AND id >= " + total_entries + " ORDER BY id";
-
-            command = new SQLiteCommand(sql, m_dbConnection);
             SQLiteDataReader reader = command.ExecuteReader();
             
             while (reader.Read())
@@ -320,7 +320,7 @@ namespace Assessment
 
         private void backBut_Click(object sender, EventArgs e)
         {
-            Form0 fr = new Form0(sem);
+            Form0 fr = new Form0(acedemicYear, sem, exam, branch);
             this.Hide();
             fr.ShowDialog();
             this.Close();

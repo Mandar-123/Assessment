@@ -34,6 +34,8 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.printReport = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.label1 = new System.Windows.Forms.Label();
+            this.totalToCheck = new System.Windows.Forms.TextBox();
             this.panel3 = new System.Windows.Forms.Panel();
             this.panel2.SuspendLayout();
             this.SuspendLayout();
@@ -43,7 +45,7 @@
             this.semSelect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.semSelect.Font = new System.Drawing.Font("Arial", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.semSelect.FormattingEnabled = true;
-            this.semSelect.Location = new System.Drawing.Point(38, 43);
+            this.semSelect.Location = new System.Drawing.Point(38, 30);
             this.semSelect.Name = "semSelect";
             this.semSelect.Size = new System.Drawing.Size(94, 25);
             this.semSelect.TabIndex = 0;
@@ -54,10 +56,11 @@
             this.subSelect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.subSelect.Font = new System.Drawing.Font("Arial", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.subSelect.FormattingEnabled = true;
-            this.subSelect.Location = new System.Drawing.Point(38, 112);
+            this.subSelect.Location = new System.Drawing.Point(38, 89);
             this.subSelect.Name = "subSelect";
             this.subSelect.Size = new System.Drawing.Size(364, 25);
             this.subSelect.TabIndex = 1;
+            this.subSelect.SelectedIndexChanged += new System.EventHandler(this.subSelect_SelectedIndexChanged);
             // 
             // button1
             // 
@@ -95,6 +98,8 @@
             // 
             this.panel2.BackColor = System.Drawing.Color.LavenderBlush;
             this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel2.Controls.Add(this.label1);
+            this.panel2.Controls.Add(this.totalToCheck);
             this.panel2.Controls.Add(this.semSelect);
             this.panel2.Controls.Add(this.subSelect);
             this.panel2.Controls.Add(this.button1);
@@ -103,12 +108,29 @@
             this.panel2.Size = new System.Drawing.Size(437, 245);
             this.panel2.TabIndex = 5;
             // 
+            // label1
+            // 
+            this.label1.Font = new System.Drawing.Font("Arial", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(35, 148);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(100, 23);
+            this.label1.TabIndex = 4;
+            this.label1.Text = "Total Papers:";
+            // 
+            // totalToCheck
+            // 
+            this.totalToCheck.Font = new System.Drawing.Font("Arial", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.totalToCheck.Location = new System.Drawing.Point(141, 145);
+            this.totalToCheck.Name = "totalToCheck";
+            this.totalToCheck.Size = new System.Drawing.Size(56, 24);
+            this.totalToCheck.TabIndex = 3;
+            // 
             // panel3
             // 
             this.panel3.BackColor = System.Drawing.Color.LavenderBlush;
             this.panel3.Location = new System.Drawing.Point(740, 204);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(500, 245);
+            this.panel3.Size = new System.Drawing.Size(583, 245);
             this.panel3.TabIndex = 6;
             // 
             // Form0
@@ -124,6 +146,7 @@
             this.Text = "Form0";
             this.Load += new System.EventHandler(this.Form0_Load);
             this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -137,5 +160,7 @@
         private System.Windows.Forms.Button printReport;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Panel panel3;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox totalToCheck;
     }
 }
