@@ -19,7 +19,7 @@ namespace Assessment
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form0("2018-2019", "Sem 3", "DEC", "ETRX"));
+            Application.Run(new Form0("2019-2020", "Sem 3", "MAY", "CMPN"));
         }
     }
 }

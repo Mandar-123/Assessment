@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Data.SQLite;
 using System.IO;
 using OfficeOpenXml;
+using OfficeOpenXml.Style;
 
 namespace Assessment
 {
@@ -279,7 +280,7 @@ namespace Assessment
         private void printReport_Click(object sender, EventArgs e)
         {
             string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            string f = path + "/Todays Reports/" + branch + ".xlsx";
+            string f = path + "/Reports/" + acedemicYear + "\\" + exam + "\\" + branch + "/" + DateTime.Today.Date.Day + "-" + DateTime.Today.Date.Month + "-" + DateTime.Today.Date.Year + ".xlsx";
             bool res = WriteExcel(f, mDbPath);
             if (res == false)
                 return;
@@ -307,6 +308,11 @@ namespace Assessment
                     MessageBox.Show("Please Close the previous Report !");
                     return false;
                 }       
+            }
+            string dir = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "/Reports/" + acedemicYear + "\\" + exam + "\\" + branch; ;
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
             }
             FileInfo file = new FileInfo(filename);
             SQLiteConnection dbconnect = new SQLiteConnection("Data Source=" + database + ";Version=3;");
@@ -345,19 +351,22 @@ namespace Assessment
                         ws.Cells[row, 1].Value = "Sr No.";
                         ws.Cells[row, 1].AutoFitColumns();
                         ws.Cells[row, 2].Value = "Assessor";
-                        ws.Cells[row, 2].AutoFitColumns();
                         ws.Cells[row, 3].Value = "Moderator";
-                        ws.Cells[row, 3].AutoFitColumns();
                         ws.Cells[row, 4].Value = "Allocated";
                         ws.Cells[row, 4].AutoFitColumns();
                         ws.Cells[row, 5].Value = "Checked";
                         ws.Cells[row, 5].AutoFitColumns();
                         ws.Cells[row, 6].Value = "TodayChecked";
                         ws.Cells[row, 6].AutoFitColumns();
+                        makeBorderTop(ws, row);
+                        makeBorderBottom(ws, row);
+                        makeBorderLeft(ws, row);
+                        makeBorderRight(ws, row);
                         ws.Cells[row, 1, row, 6].Style.Font.Bold = true;
                         row++;
 
                         int c = 1;
+                        int sumA = 0, sumC = 0, sumT = 0;
                         while (reader2.Read())
                         {
                             ws.Cells[row, 1].Value = c.ToString();
@@ -376,12 +385,23 @@ namespace Assessment
                                 max3 = t;
                             }
                             ws.Cells[row, 4].Value = reader2[2];
+                            sumC = sumC + (int)reader2[2];
                             ws.Cells[row, 5].Value = reader2[3];
+                            sumA = sumA + (int)reader2[3];
                             ws.Cells[row, 6].Value = reader2[4];
+                            sumT = sumT + (int)reader2[4];
+                            makeBorderLeft(ws, row);
+                            makeBorderRight(ws, row);
                             row++;
                             c++;
                         }
-
+                        makeBorderTop(ws, row);
+                        makeBorderBottom(ws, row);
+                        makeBorderLeft(ws, row);
+                        makeBorderRight(ws, row);
+                        ws.Cells[row, 4].Value = sumC;
+                        ws.Cells[row, 5].Value = sumA;
+                        ws.Cells[row, 6].Value = sumT;
                         row = row + 2;
                     }
 
@@ -391,6 +411,34 @@ namespace Assessment
                 p.Save();
             }
             return true;
+        }
+        public void makeBorderTop(ExcelWorksheet ws, int row)
+        {
+            for(int i = 1; i <= 6; i++)
+            {
+                ws.Cells[row, i].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+            }
+        }
+        public void makeBorderLeft(ExcelWorksheet ws, int row)
+        {
+            for (int i = 1; i <= 6; i++)
+            {
+                ws.Cells[row, i].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+            }
+        }
+        public void makeBorderRight(ExcelWorksheet ws, int row)
+        {
+            for (int i = 1; i <= 6; i++)
+            {
+                ws.Cells[row, i].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+            }
+        }
+        public void makeBorderBottom(ExcelWorksheet ws, int row)
+        {
+            for (int i = 1; i <= 6; i++)
+            {
+                ws.Cells[row, i].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+            }
         }
     }
 }
