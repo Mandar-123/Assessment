@@ -37,6 +37,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.totalToCheck = new System.Windows.Forms.TextBox();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.button2 = new System.Windows.Forms.Button();
             this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -133,11 +134,23 @@
             this.panel3.Size = new System.Drawing.Size(583, 245);
             this.panel3.TabIndex = 6;
             // 
+            // button2
+            // 
+            this.button2.BackColor = System.Drawing.Color.LightPink;
+            this.button2.Location = new System.Drawing.Point(28, 12);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(44, 30);
+            this.button2.TabIndex = 7;
+            this.button2.Text = "<--";
+            this.button2.UseVisualStyleBackColor = false;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
             // Form0
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1350, 729);
+            this.Controls.Add(this.button2);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.printReport);
@@ -162,5 +175,6 @@
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox totalToCheck;
+        private System.Windows.Forms.Button button2;
     }
 }

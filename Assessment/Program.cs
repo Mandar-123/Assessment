@@ -37,8 +37,7 @@ namespace Assessment
                 fillCMPN();
                 fillETRX();
             }
-            //Application.Run(new Form0("2018-2019", "Sem 3", "DEC", "CMPN"));
-            Application.Run(new Form2());
+            Application.Run(new Form2("2018 - 2019", "Sem 3", "Dec 18", "CMPN"));
         }
 
         public static void fillCMPN()

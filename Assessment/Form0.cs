@@ -240,7 +240,7 @@ namespace Assessment
                 var reader = query.ExecuteReader();
 
                 ws.Cells[row, 1, row, 6].Merge = true;
-                ws.Cells[row, 1, row, 6].Value = branch + " ("+ exam + ") " + "SEM " + i.ToString();
+                ws.Cells[row, 1, row, 6].Value = branch + " ("+ exam + ") " + "SEM " + i.ToString() + " - " + DateTime.Today.Date.Day + "/" + DateTime.Today.Date.Month + "/" + DateTime.Today.Date.Year;
                 ws.Cells[row, 1, row, 6].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
                 ws.Cells[row, 1, row, 6].Style.Font.Size = 14;
                 ws.Cells[row, 1, row, 6].Style.Font.Bold = true;
@@ -261,7 +261,9 @@ namespace Assessment
                     ws.Cells[row, 1].Value = "Sr No.";
                     ws.Cells[row, 1].AutoFitColumns();
                     ws.Cells[row, 2].Value = "Assessor";
+                    ws.Cells[row, 2].AutoFitColumns();
                     ws.Cells[row, 3].Value = "Moderator";
+                    ws.Cells[row, 3].AutoFitColumns();
                     ws.Cells[row, 4].Value = "Allocated";
                     ws.Cells[row, 4].AutoFitColumns();
                     ws.Cells[row, 5].Value = "Checked";
@@ -319,6 +321,15 @@ namespace Assessment
             }
             return true;
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Form2 fr = new Form2(acedemicYear, s, exam, branch);
+            this.Hide();
+            fr.ShowDialog();
+            this.Close();
+        }
+
         public void makeBorderTop(ExcelWorksheet ws, int row)
         {
             for(int i = 1; i <= 6; i++)
