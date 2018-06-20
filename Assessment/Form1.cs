@@ -24,8 +24,8 @@ namespace Assessment
         string name;
         string sem;
         string mDbPath;
-        string acedemicYear, exam, branch;
-        public Form1(int sid, string name, string sem, string dbPath, string ay, string ex, string br, int ttc)
+        string acedemicYear, exam, branch, cORm;
+        public Form1(int sid, string name, string sem, string dbPath, string ay, string ex, string br, int ttc, string cm)
         {
             InitializeComponent();
             this.sid = sid;
@@ -39,19 +39,34 @@ namespace Assessment
             this.acedemicYear = ay;
             this.exam = ex;
             this.branch = br;
-            this.total = ttc; 
+            this.total = ttc;
+            this.cORm = cm;
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             this.WindowState = FormWindowState.Maximized;
             this.Controls.Add(makeLabel(75, 40, 400, name + " (" + sem + ")"));
-            panel1.Controls.Add(makeLabel(txtBoxStartPosition, txtBoxStartPositionV, 250, "Assessor"));
-            panel1.Controls.Add(makeLabel(txtBoxStartPosition + 250 + d, txtBoxStartPositionV, 250, "Moderator"));
-            panel1.Controls.Add(makeLabel(txtBoxStartPosition + 465 + 2 * d, txtBoxStartPositionV, 100, "Total Checked"));
+            if (cORm == "Moderation")
+            {
+                panel1.Controls.Add(makeLabel(txtBoxStartPosition, txtBoxStartPositionV, 250, "Moderator"));
+                panel1.Controls.Add(makeLabel(txtBoxStartPosition + 250 + d, txtBoxStartPositionV, 250, "Assessor"));
+            }
+            else
+            {
+                panel1.Controls.Add(makeLabel(txtBoxStartPosition, txtBoxStartPositionV, 250, "Assessor"));
+                panel1.Controls.Add(makeLabel(txtBoxStartPosition + 250 + d, txtBoxStartPositionV, 250, "Moderator"));
+            }
+            if(cORm == "Checking")
+                panel1.Controls.Add(makeLabel(txtBoxStartPosition + 465 + 2 * d, txtBoxStartPositionV, 100, "Total Checked"));
+            else
+                panel1.Controls.Add(makeLabel(txtBoxStartPosition + 465 + 2 * d, txtBoxStartPositionV, 120, "Total Moderated"));
             panel1.Controls.Add(makeLabel(txtBoxStartPosition + 575 + 3 * d, txtBoxStartPositionV, 10, "/"));
             panel1.Controls.Add(makeLabel(txtBoxStartPosition + 575 + 4 * d, txtBoxStartPositionV, 75, "Allocated"));
-            panel1.Controls.Add(makeLabel(txtBoxStartPosition + 650 + 5 * d, txtBoxStartPositionV, 120, "Checked Today"));
+            if(cORm == "Checking")
+                panel1.Controls.Add(makeLabel(txtBoxStartPosition + 650 + 5 * d, txtBoxStartPositionV, 120, "Checked Today"));
+            else
+                panel1.Controls.Add(makeLabel(txtBoxStartPosition + 650 + 5 * d, txtBoxStartPositionV, 120, "Moderated Today"));
             txtBoxStartPositionV += 30;
             SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + mDbPath + ";Version=3;");
             m_dbConnection.Open();
@@ -60,7 +75,16 @@ namespace Assessment
             command.ExecuteNonQuery();
             m_dbConnection.Close();
             load();
-            save_but_Click(sender, e);
+            if (cORm == "Checking")
+            {
+                saveMod.Hide();
+                save_but_Click(sender, e);
+            }
+            else
+            {
+                newPanel.Hide();
+                saveMod_Click(sender, e);
+            }
         }
 
         public static TextBox makeBox(int xLoc, int yLoc, int xSize, string t,string name, bool enabled, bool isNumber)
@@ -205,6 +229,74 @@ namespace Assessment
             }
         }
 
+        private void saveMod_Click(object sender, EventArgs e)
+        {
+            int sumModerated = 0, sumAllocated = 0, sumTodayModerated = 0;
+            SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + mDbPath + ";Version=3;");
+            m_dbConnection.Open();
+
+            string sql;
+            SQLiteCommand command;
+
+            for (int i = 1; i < total_entries; i++)
+            {
+                string ass, mod;
+                int alloc, mode, tmode;
+                TextBox txtBox = panel1.Controls["ass_" + i.ToString()] as TextBox;
+                ass = txtBox.Text;
+                txtBox = panel1.Controls["mod_" + i.ToString()] as TextBox;
+                mod = txtBox.Text;
+                txtBox = panel1.Controls["mode_" + i.ToString()] as TextBox;
+                mode = Int32.Parse(txtBox.Text);
+                txtBox = panel1.Controls["tmode_" + i.ToString()] as TextBox;
+                if (txtBox.Text == "")
+                {
+                    tmode = 0;
+                    txtBox.Text = "0";
+                }
+                else
+                    tmode = Int32.Parse(txtBox.Text);
+                txtBox = panel1.Controls["alloc_" + i.ToString()] as TextBox;
+                if (txtBox.Text == "")
+                {
+                    alloc = 0;
+                    txtBox.Text = "0";
+                }
+                else
+                    alloc = Int32.Parse(txtBox.Text);
+
+
+                sql = "SELECT todayModerated FROM allocation WHERE sid = " + sid + " AND id = " + i + ";";
+                command = new SQLiteCommand(sql, m_dbConnection);
+                SQLiteDataReader reader = command.ExecuteReader();
+                int actual_add = 0;
+                while (reader.Read())
+                    actual_add = tmode - (int)reader["todayModerated"];
+                mode = mode + actual_add;
+                sumTodayModerated += tmode;
+                sumModerated += mode;
+                sumAllocated += alloc;
+
+                if (mode > alloc)
+                {
+                    MessageBox.Show("Total Papers moderated cannot be greater than Total papers allocated!", "Alert!");
+                    txtBox = panel1.Controls["tmode_" + i.ToString()] as TextBox;
+                    txtBox.Focus();
+                    return;
+                }
+
+                sql = "UPDATE allocation SET moderator = '" + mod + "', allocated = " + alloc + ", moderated = " + mode + ", todayModerated = " + tmode + " WHERE sid =" + sid + " AND id = " + i + ";";
+                command = new SQLiteCommand(sql, m_dbConnection);
+                command.ExecuteNonQuery();
+                txtBox = panel1.Controls["mode_" + i.ToString()] as TextBox;
+                txtBox.Text = mode.ToString();
+            }
+            m_dbConnection.Close();
+            sumC.Text = sumModerated.ToString();
+            sumA.Text = sumAllocated.ToString();
+            sumT.Text = sumTodayModerated.ToString();
+        }
+
         private void addNew_Click(object sender, EventArgs e)
         {
             SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + mDbPath + ";Version=3;");
@@ -256,7 +348,7 @@ namespace Assessment
                 return;
             }
 
-            string sql = "INSERT into allocation (sid, id, assessor, moderator, allocated, checked, todayChecked) values (" + sid + ", " + total_entries + ", '" + ass + "', '" + mod + "', " + alloc + ", " + chkd + ", " + tchkd + ");";
+            string sql = "INSERT into allocation (sid, id, assessor, moderator, allocated, checked, todayChecked, moderated, todayModerated) values (" + sid + ", " + total_entries + ", '" + ass + "', '" + mod + "', " + alloc + ", " + chkd + ", " + tchkd + ", 0, 0);";
             SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
             try
             {
@@ -270,6 +362,7 @@ namespace Assessment
                 txtBox.Focus();
                 m_dbConnection.Close();
                 return;
+
             }
             new_ass.Text = "";
             new_mod.Text = "";
@@ -287,7 +380,6 @@ namespace Assessment
             m_dbConnection.Open();
             
             string sql = "SELECT * FROM allocation where sid = " + sid + " AND id >= " + total_entries + " ORDER BY id";
-
             SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
             SQLiteDataReader reader = command.ExecuteReader();
             
@@ -299,12 +391,28 @@ namespace Assessment
                 int t_all = (int)reader["allocated"];
                 int t_chkd = (int)reader["checked"];
                 int t_tchkd = (int)reader["todayChecked"];
-                panel1.Controls.Add(makeBox(txtBoxStartPosition, txtBoxStartPositionV, 250, t_ass, "ass_" + t_id.ToString(), true, false));
-                panel1.Controls.Add(makeBox(txtBoxStartPosition + 250 + d, txtBoxStartPositionV, 250, t_mod, "mod_" + t_id.ToString(), true, false));
-                panel1.Controls.Add(makeBox(txtBoxStartPosition + 500 + 2 * d, txtBoxStartPositionV, 50, t_chkd.ToString(), "chkd_" + t_id.ToString(), false, true));
+                int t_mode = (int)reader["moderated"];
+                int t_tmode = (int)reader["todayModerated"];
+                if (cORm == "Checking")
+                {
+                    panel1.Controls.Add(makeBox(txtBoxStartPosition, txtBoxStartPositionV, 250, t_ass, "ass_" + t_id.ToString(), true, false));
+                    panel1.Controls.Add(makeBox(txtBoxStartPosition + 250 + d, txtBoxStartPositionV, 250, t_mod, "mod_" + t_id.ToString(), true, false));
+                }
+                else
+                {
+                    panel1.Controls.Add(makeBox(txtBoxStartPosition, txtBoxStartPositionV, 250, t_mod, "mod_" + t_id.ToString(), true, false));
+                    panel1.Controls.Add(makeBox(txtBoxStartPosition + 250 + d, txtBoxStartPositionV, 250, t_ass, "ass_" + t_id.ToString(), false, false));
+                }
+                if (cORm == "Checking")
+                    panel1.Controls.Add(makeBox(txtBoxStartPosition + 500 + 2 * d, txtBoxStartPositionV, 50, t_chkd.ToString(), "chkd_" + t_id.ToString(), false, true));
+                else
+                    panel1.Controls.Add(makeBox(txtBoxStartPosition + 500 + 2 * d, txtBoxStartPositionV, 50, t_mode.ToString(), "mode_" + t_id.ToString(), false, true));
                 panel1.Controls.Add(makeLabel(txtBoxStartPosition + 575 + 3 * d, txtBoxStartPositionV, 10, "/"));
                 panel1.Controls.Add(makeBox(txtBoxStartPosition + 585 + 4 * d, txtBoxStartPositionV, 50, t_all.ToString(), "alloc_" + t_id.ToString(), true, true));
-                panel1.Controls.Add(makeBox(txtBoxStartPosition + 665 + 5 * d, txtBoxStartPositionV, 50, t_tchkd.ToString(), "tchkd_" + t_id.ToString(), true, true));
+                if(cORm == "Checking")
+                    panel1.Controls.Add(makeBox(txtBoxStartPosition + 665 + 5 * d, txtBoxStartPositionV, 50, t_tchkd.ToString(), "tchkd_" + t_id.ToString(), true, true));
+                else
+                    panel1.Controls.Add(makeBox(txtBoxStartPosition + 665 + 5 * d, txtBoxStartPositionV, 50, t_tmode.ToString(), "tmode_" + t_id.ToString(), true, true));
                 txtBoxStartPositionV += 30;
                 total_entries++;
             }
@@ -316,6 +424,7 @@ namespace Assessment
 
             m_dbConnection.Close();
             newPanel.Location = new Point(0, txtBoxStartPositionV);
+            saveMod.Location = new Point(540, txtBoxStartPositionV + 30);
         }
 
         private void backBut_Click(object sender, EventArgs e)

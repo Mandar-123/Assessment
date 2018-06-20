@@ -38,6 +38,7 @@
             this.totalToCheck = new System.Windows.Forms.TextBox();
             this.panel3 = new System.Windows.Forms.Panel();
             this.button2 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
             this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -67,11 +68,11 @@
             // 
             this.button1.BackColor = System.Drawing.Color.LightSkyBlue;
             this.button1.Font = new System.Drawing.Font("Arial", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(38, 189);
+            this.button1.Location = new System.Drawing.Point(38, 207);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 37);
+            this.button1.Size = new System.Drawing.Size(97, 37);
             this.button1.TabIndex = 2;
-            this.button1.Text = "Go";
+            this.button1.Text = "Checking";
             this.button1.UseVisualStyleBackColor = false;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -99,6 +100,7 @@
             // 
             this.panel2.BackColor = System.Drawing.Color.LavenderBlush;
             this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel2.Controls.Add(this.button3);
             this.panel2.Controls.Add(this.label1);
             this.panel2.Controls.Add(this.totalToCheck);
             this.panel2.Controls.Add(this.semSelect);
@@ -106,7 +108,7 @@
             this.panel2.Controls.Add(this.button1);
             this.panel2.Location = new System.Drawing.Point(154, 204);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(437, 245);
+            this.panel2.Size = new System.Drawing.Size(437, 266);
             this.panel2.TabIndex = 5;
             // 
             // label1
@@ -145,6 +147,18 @@
             this.button2.UseVisualStyleBackColor = false;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
+            // button3
+            // 
+            this.button3.BackColor = System.Drawing.Color.LightSkyBlue;
+            this.button3.Font = new System.Drawing.Font("Arial", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button3.Location = new System.Drawing.Point(245, 207);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(97, 37);
+            this.button3.TabIndex = 5;
+            this.button3.Text = "Moderation";
+            this.button3.UseVisualStyleBackColor = false;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
             // Form0
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -176,5 +190,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox totalToCheck;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button3;
     }
 }

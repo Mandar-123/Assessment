@@ -60,7 +60,7 @@ namespace Assessment
                 copySubjects();
             }
 
-            sql = "CREATE TABLE IF NOT EXISTS allocation (sid int, id int, assessor varchar(50), moderator varchar(50), allocated int, checked int, todayChecked int, PRIMARY KEY(sid, id), UNIQUE(sid, assessor));";
+            sql = "CREATE TABLE IF NOT EXISTS allocation (sid int, id int, assessor varchar(50), moderator varchar(50), allocated int, checked int, todayChecked int, moderated int, todayModerated int, PRIMARY KEY(sid, id), UNIQUE(sid, assessor));";
             command = new SQLiteCommand(sql, m_dbConnection);
             command.ExecuteNonQuery();
 
@@ -182,7 +182,7 @@ namespace Assessment
             }
             string sem = semSelect.Text;
             int ttc = Int32.Parse(totalToCheck.Text);
-            Form1 fr = new Form1(n, subject, sem, mDbPath, acedemicYear, exam, branch, ttc);
+            Form1 fr = new Form1(n, subject, sem, mDbPath, acedemicYear, exam, branch, ttc, "Checking");
             this.Hide();
             fr.ShowDialog();
             this.Close();
@@ -325,6 +325,28 @@ namespace Assessment
         private void button2_Click(object sender, EventArgs e)
         {
             Form2 fr = new Form2(acedemicYear, s, exam, branch);
+            this.Hide();
+            fr.ShowDialog();
+            this.Close();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            string subject = subSelect.Text;
+            SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + mDbPath + ";Version=3;");
+            m_dbConnection.Open();
+
+            string sql = "SELECT id FROM subject WHERE name = '" + subject + "';";
+            SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
+            SQLiteDataReader reader = command.ExecuteReader();
+            int n = 0;
+            while (reader.Read())
+            {
+                n = (int)reader["id"];
+            }
+            string sem = semSelect.Text;
+            int ttc = Int32.Parse(totalToCheck.Text);
+            Form1 fr = new Form1(n, subject, sem, mDbPath, acedemicYear, exam, branch, ttc, "Moderation");
             this.Hide();
             fr.ShowDialog();
             this.Close();

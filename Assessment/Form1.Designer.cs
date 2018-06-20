@@ -43,6 +43,7 @@
             this.save_but = new System.Windows.Forms.Button();
             this.backBut = new System.Windows.Forms.Button();
             this.rem = new System.Windows.Forms.Label();
+            this.saveMod = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.newPanel.SuspendLayout();
             this.SuspendLayout();
@@ -52,6 +53,7 @@
             this.panel1.AutoScroll = true;
             this.panel1.BackColor = System.Drawing.Color.LavenderBlush;
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.saveMod);
             this.panel1.Controls.Add(this.newPanel);
             this.panel1.Location = new System.Drawing.Point(75, 77);
             this.panel1.Margin = new System.Windows.Forms.Padding(0);
@@ -202,6 +204,18 @@
             this.rem.Size = new System.Drawing.Size(163, 23);
             this.rem.TabIndex = 2;
             // 
+            // saveMod
+            // 
+            this.saveMod.BackColor = System.Drawing.Color.LightSkyBlue;
+            this.saveMod.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.saveMod.Location = new System.Drawing.Point(556, 450);
+            this.saveMod.Name = "saveMod";
+            this.saveMod.Size = new System.Drawing.Size(100, 41);
+            this.saveMod.TabIndex = 2;
+            this.saveMod.Text = "Save";
+            this.saveMod.UseVisualStyleBackColor = false;
+            this.saveMod.Click += new System.EventHandler(this.saveMod_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -239,6 +253,7 @@
         private System.Windows.Forms.Label sumA;
         private System.Windows.Forms.Button backBut;
         private System.Windows.Forms.Label rem;
+        private System.Windows.Forms.Button saveMod;
     }
 }
 
