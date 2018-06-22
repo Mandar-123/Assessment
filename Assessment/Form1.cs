@@ -168,9 +168,20 @@ namespace Assessment
                 sumChecked += chkd;
                 sumAllocated += alloc;
 
+                if (total - sumAllocated < 0)
+                {
+                    MessageBox.Show("Total Papers Allocated is exceeding the limit!", "Alert!");
+                    for(int j = i; j < total_entries; j++)
+                    {
+                        txtBox = panel1.Controls["alloc_" + j.ToString()] as TextBox;
+                        txtBox.Text = "0";
+                    }
+                    save_but_Click(sender, e);
+                    return;
+                }
                 if (chkd > alloc)
                 {
-                    MessageBox.Show("Total Papers checked cannot be greater than Total papers allocated!", "Alert!");
+                    MessageBox.Show("Papers checked greater than Papers allocated!", "Alert!");
                     txtBox = panel1.Controls["tchkd_" + i.ToString()] as TextBox;
                     txtBox.Focus();
                     return;
@@ -206,7 +217,7 @@ namespace Assessment
         {
             if (System.Text.RegularExpressions.Regex.IsMatch(new_chkd.Text, "[^0-9]"))
             {
-                MessageBox.Show("Please enter only numbers.");
+                MessageBox.Show("Please enter numbers only.");
                 new_chkd.Text = new_chkd.Text.Remove(new_chkd.Text.Length - 1);
             }
         }
@@ -215,7 +226,7 @@ namespace Assessment
         {
             if (System.Text.RegularExpressions.Regex.IsMatch(new_alloc.Text, "[^0-9]"))
             {
-                MessageBox.Show("Please enter only numbers.");
+                MessageBox.Show("Please enter numbers only.");
                 new_alloc.Text = new_alloc.Text.Remove(new_alloc.Text.Length - 1);
             }
         }
@@ -224,7 +235,7 @@ namespace Assessment
         {
             if (System.Text.RegularExpressions.Regex.IsMatch(new_tchkd.Text, "[^0-9]"))
             {
-                MessageBox.Show("Please enter only numbers.");
+                MessageBox.Show("Please enter numbers only.");
                 new_tchkd.Text = new_tchkd.Text.Remove(new_tchkd.Text.Length - 1);
             }
         }
@@ -279,7 +290,7 @@ namespace Assessment
 
                 if (mode > alloc)
                 {
-                    MessageBox.Show("Total Papers moderated cannot be greater than Total papers allocated!", "Alert!");
+                    MessageBox.Show("Papers moderated greater than papers allocated!", "Alert!");
                     txtBox = panel1.Controls["tmode_" + i.ToString()] as TextBox;
                     txtBox.Focus();
                     return;
@@ -342,7 +353,7 @@ namespace Assessment
 
             if (alloc < chkd)
             {
-                MessageBox.Show("Total papers checked cannot be greater than Total papers Allocated!", "Alert!");
+                MessageBox.Show("Papers checked greater than Papers Allocated!", "Alert!");
                 txtBox = newPanel.Controls["new_chkd"] as TextBox;
                 txtBox.Focus();
                 return;
@@ -408,8 +419,11 @@ namespace Assessment
                 else
                     panel1.Controls.Add(makeBox(txtBoxStartPosition + 500 + 2 * d, txtBoxStartPositionV, 50, t_mode.ToString(), "mode_" + t_id.ToString(), false, true));
                 panel1.Controls.Add(makeLabel(txtBoxStartPosition + 575 + 3 * d, txtBoxStartPositionV, 10, "/"));
-                panel1.Controls.Add(makeBox(txtBoxStartPosition + 585 + 4 * d, txtBoxStartPositionV, 50, t_all.ToString(), "alloc_" + t_id.ToString(), true, true));
                 if(cORm == "Checking")
+                    panel1.Controls.Add(makeBox(txtBoxStartPosition + 585 + 4 * d, txtBoxStartPositionV, 50, t_all.ToString(), "alloc_" + t_id.ToString(), true, true));
+                else
+                    panel1.Controls.Add(makeBox(txtBoxStartPosition + 585 + 4 * d, txtBoxStartPositionV, 50, t_all.ToString(), "alloc_" + t_id.ToString(), false, true));
+                if (cORm == "Checking")
                     panel1.Controls.Add(makeBox(txtBoxStartPosition + 665 + 5 * d, txtBoxStartPositionV, 50, t_tchkd.ToString(), "tchkd_" + t_id.ToString(), true, true));
                 else
                     panel1.Controls.Add(makeBox(txtBoxStartPosition + 665 + 5 * d, txtBoxStartPositionV, 50, t_tmode.ToString(), "tmode_" + t_id.ToString(), true, true));
