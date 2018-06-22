@@ -51,7 +51,7 @@ namespace Assessment
             SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + mDbPath + ";Version=3;");
             m_dbConnection.Open();
 
-            string sql = "CREATE TABLE IF NOT EXISTS subject (id int PRIMARY KEY, name varchar(50) UNIQUE, sem int, todayDone int, sf varchar(10), total int);";
+            string sql = "CREATE TABLE IF NOT EXISTS subject (id int PRIMARY KEY, name varchar(50) UNIQUE, sem int, todayDone int, todayModDone int, sf varchar(10), total int);";
 
             SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
             int num = command.ExecuteNonQuery();
@@ -59,31 +59,83 @@ namespace Assessment
             {
                 copySubjects();
             }
-
+            sql = "CREATE TABLE IF NOT EXISTS repdate (date varchar(50), time varchar(50))";
+            command = new SQLiteCommand(sql, m_dbConnection);
+            int r = command.ExecuteNonQuery();
+            if(r != -1)
+            {
+                sql = "INSERT INTO repdate (time) VALUES ('NA')";
+            }
+            command = new SQLiteCommand(sql, m_dbConnection);
+            command.ExecuteNonQuery();
             sql = "CREATE TABLE IF NOT EXISTS allocation (sid int, id int, assessor varchar(50), moderator varchar(50), allocated int, checked int, todayChecked int, moderated int, todayModerated int, PRIMARY KEY(sid, id), UNIQUE(sid, assessor));";
             command = new SQLiteCommand(sql, m_dbConnection);
             command.ExecuteNonQuery();
 
+            sql = "SELECT * FROM repdate;";
+            command = new SQLiteCommand(sql, m_dbConnection);
+            SQLiteDataReader reader1 = command.ExecuteReader();
+            while(reader1.Read())
+                repDate.Text = "Last Report Generated on: " + (string)reader1["time"];
             int y = 0;
             int i = s[4] - '0';
             sql = "SELECT * FROM subject WHERE sem = " + i + " ORDER BY id;";
             command = new SQLiteCommand(sql, m_dbConnection);
             SQLiteDataReader reader = command.ExecuteReader();
-            Label btn = makeLabel(20, 54 + y, 60, "SEM" + i.ToString(), "White");
-            panel3.Controls.Add(btn);
+
+            panel3.Controls.Add(makeLabel(10, 10, 70, "Subject", "LavenderBlush"));
+            panel3.Controls.Add(makeLabel(80, 10, 70, "Allocated", "LavenderBlush"));
+            panel3.Controls.Add(makeLabel(150, 10, 70, "Checked", "LavenderBlush"));
+            panel3.Controls.Add(makeLabel(220, 10, 80, "Moderated", "LavenderBlush"));
+            panel3.Controls.Add(makeLabel(300, 10, 110, "Checking Entry", "LavenderBlush"));
+            panel3.Controls.Add(makeLabel(410, 10, 130, "Moderation Entry", "LavenderBlush"));
+
             string sf;
-            int t, d = 0;
+            int tc,tm,t;
             while (reader.Read())
             {
+                y = y + 30;
                 sf = (string)reader["sf"];
-                t = (int)reader["todayDone"];
-
-                if (t == 1)
-                    btn = makeLabel(114 + d, 54 + y, 60, sf, "green");
+                tc = (int)reader["todayDone"];
+                tm = (int)reader["todayModDone"];
+                t = (int)reader["total"];
+                sql = "SELECT * FROM allocation WHERE sid = " + (int)reader["id"] + ";";
+                SQLiteCommand command2 = new SQLiteCommand(sql, m_dbConnection);
+                SQLiteDataReader reader2 = command2.ExecuteReader();
+                int sumC = 0, sumA = 0, sumM = 0;
+                while (reader2.Read())
+                {
+                    sumC = sumC + (int)reader2["checked"];
+                    sumA = sumA + (int)reader2["allocated"];
+                    sumM = sumM + (int)reader2["moderated"];
+                }
+                panel3.Controls.Add(makeLabel(10, 10 + y, 70, sf, "LavenderBlush"));
+                panel3.Controls.Add(makeLabel(80, 10 + y, 70, sumA.ToString() + "/" + t.ToString(), "LavenderBlush"));
+                panel3.Controls.Add(makeLabel(150, 10 + y, 70, sumC.ToString() + "/" + sumA.ToString(), "LavenderBlush"));
+                panel3.Controls.Add(makeLabel(220, 10 + y, 80, sumM.ToString() + "/" + sumC.ToString(), "LavenderBlush"));
+                if(tc == 1)
+                {
+                    Label l = makeLabel(300, 10 + y, 110, "✓", "LavenderBlush");
+                    l.ForeColor = Color.Green;
+                    panel3.Controls.Add(l);
+                } else
+                {
+                    Label l = makeLabel(300, 10 + y, 110, "X", "LavenderBlush");
+                    l.ForeColor = Color.Red;
+                    panel3.Controls.Add(l);
+                }
+                if (tm == 1)
+                {
+                    Label l = makeLabel(410, 10 + y, 130, "✓", "LavenderBlush");
+                    l.ForeColor = Color.Green;
+                    panel3.Controls.Add(l);
+                }
                 else
-                    btn = makeLabel(114 + d, 54 + y, 60, sf, "red");
-                panel3.Controls.Add(btn);
-                d = d + 80;
+                {
+                    Label l = makeLabel(410, 10 + y, 130, "X", "LavenderBlush");
+                    l.ForeColor = Color.Red;
+                    panel3.Controls.Add(l);
+                }
             }
         }
 
@@ -101,7 +153,7 @@ namespace Assessment
             int i = 0;
             while (reader.Read())
             {
-                sql = "INSERT INTO subject(id, name, sem, todayDone, sf , total) VALUES ("+ i +", '"+ reader[2].ToString() +"', " + semest + ", 0, '" + reader[4].ToString() + "' , 0)";
+                sql = "INSERT INTO subject(id, name, sem, todayDone, todayModDone, sf , total) VALUES ("+ i +", '"+ reader[2].ToString() +"', " + semest + ", 0, 0, '" + reader[4].ToString() + "' , 0)";
                 SQLiteCommand command2 = new SQLiteCommand(sql, m_dbConnection2);
                 command2.ExecuteNonQuery();
                 i++;
@@ -122,6 +174,7 @@ namespace Assessment
             else newLabel.BackColor = Color.LavenderBlush;
             newLabel.AutoSize = false;
             newLabel.Text = t;
+            newLabel.BorderStyle = BorderStyle.FixedSingle;
             return newLabel;
         }
         private void semSelect_SelectedIndexChanged(object sender, EventArgs e)
@@ -197,10 +250,13 @@ namespace Assessment
                 return;
             SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + mDbPath + ";Version=3;");
             m_dbConnection.Open();
-            string sql = "UPDATE allocation SET todayChecked = 0;";
+            string sql = "UPDATE allocation SET todayChecked = 0, todayModerated = 0;";
             SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
             command.ExecuteNonQuery();
-            sql = "UPDATE subject SET todayDone = 0;";
+            sql = "UPDATE subject SET todayDone = 0, todayModDone = 0;";
+            command = new SQLiteCommand(sql, m_dbConnection);
+            command.ExecuteNonQuery();
+            sql = "UPDATE repdate SET time = '" + DateTime.Now + "'";
             command = new SQLiteCommand(sql, m_dbConnection);
             command.ExecuteNonQuery();
             m_dbConnection.Close();
@@ -239,23 +295,23 @@ namespace Assessment
                 SQLiteCommand query = new SQLiteCommand(sql, dbconnect);
                 var reader = query.ExecuteReader();
 
-                ws.Cells[row, 1, row, 6].Merge = true;
-                ws.Cells[row, 1, row, 6].Value = branch + " ("+ exam + ") " + "SEM " + i.ToString() + " - " + DateTime.Today.Date.Day + "/" + DateTime.Today.Date.Month + "/" + DateTime.Today.Date.Year;
-                ws.Cells[row, 1, row, 6].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-                ws.Cells[row, 1, row, 6].Style.Font.Size = 14;
-                ws.Cells[row, 1, row, 6].Style.Font.Bold = true;
+                ws.Cells[row, 1, row, 8].Merge = true;
+                ws.Cells[row, 1, row, 8].Value = branch + " ("+ exam + ") " + "SEM " + i.ToString() + " - " + DateTime.Today.Date.Day + "/" + DateTime.Today.Date.Month + "/" + DateTime.Today.Date.Year;
+                ws.Cells[row, 1, row, 8].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                ws.Cells[row, 1, row, 8].Style.Font.Size = 14;
+                ws.Cells[row, 1, row, 8].Style.Font.Bold = true;
                 row = row + 2;
 
                 while (reader.Read())
                 {
-                    ws.Cells[row, 1, row, 6].Merge = true;
-                    ws.Cells[row, 1, row, 6].Value = reader[0];
-                    ws.Cells[row, 1, row, 6].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-                    ws.Cells[row, 1, row, 6].Style.Font.Size = 12;
-                    ws.Cells[row, 1, row, 6].Style.Font.Bold = true;
+                    ws.Cells[row, 1, row, 8].Merge = true;
+                    ws.Cells[row, 1, row, 8].Value = reader[0];
+                    ws.Cells[row, 1, row, 8].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                    ws.Cells[row, 1, row, 8].Style.Font.Size = 12;
+                    ws.Cells[row, 1, row, 8].Style.Font.Bold = true;
                     row++;
 
-                    sql = "SELECT assessor, moderator, allocated, checked, todayChecked FROM allocation WHERE sid = "+ reader[1] + ";";
+                    sql = "SELECT assessor, moderator, allocated, checked, todayChecked, moderated, todayModerated FROM allocation WHERE sid = "+ reader[1] + ";";
                     SQLiteCommand query2 = new SQLiteCommand(sql, dbconnect);
                     var reader2 = query2.ExecuteReader();
                     ws.Cells[row, 1].Value = "Sr No.";
@@ -266,19 +322,23 @@ namespace Assessment
                     ws.Cells[row, 3].AutoFitColumns();
                     ws.Cells[row, 4].Value = "Allocated";
                     ws.Cells[row, 4].AutoFitColumns();
-                    ws.Cells[row, 5].Value = "Checked";
+                    ws.Cells[row, 5].Value = "Total Checked";
                     ws.Cells[row, 5].AutoFitColumns();
-                    ws.Cells[row, 6].Value = "TodayChecked";
+                    ws.Cells[row, 6].Value = "Checked Today";
                     ws.Cells[row, 6].AutoFitColumns();
+                    ws.Cells[row, 7].Value = "Total Moderated";
+                    ws.Cells[row, 7].AutoFitColumns();
+                    ws.Cells[row, 8].Value = "Moderated Today";
+                    ws.Cells[row, 8].AutoFitColumns();
                     makeBorderTop(ws, row);
                     makeBorderBottom(ws, row);
                     makeBorderLeft(ws, row);
                     makeBorderRight(ws, row);
-                    ws.Cells[row, 1, row, 6].Style.Font.Bold = true;
+                    ws.Cells[row, 1, row, 8].Style.Font.Bold = true;
                     row++;
 
                     int c = 1;
-                    int sumA = 0, sumC = 0, sumT = 0;
+                    int sumA = 0, sumC = 0, sumM = 0, sumT = 0, sumTM = 0;
                     while (reader2.Read())
                     {
                         ws.Cells[row, 1].Value = c.ToString();
@@ -297,11 +357,15 @@ namespace Assessment
                             max3 = t;
                         }
                         ws.Cells[row, 4].Value = reader2[2];
-                        sumC = sumC + (int)reader2[2];
+                        sumA = sumA + (int)reader2[2];
                         ws.Cells[row, 5].Value = reader2[3];
-                        sumA = sumA + (int)reader2[3];
+                        sumC = sumC + (int)reader2[3];
                         ws.Cells[row, 6].Value = reader2[4];
                         sumT = sumT + (int)reader2[4];
+                        ws.Cells[row, 7].Value = reader2[5];
+                        sumM = sumM + (int)reader2[3];
+                        ws.Cells[row, 8].Value = reader2[6];
+                        sumTM = sumTM + (int)reader2[4];
                         makeBorderLeft(ws, row);
                         makeBorderRight(ws, row);
                         row++;
@@ -311,9 +375,11 @@ namespace Assessment
                     makeBorderBottom(ws, row);
                     makeBorderLeft(ws, row);
                     makeBorderRight(ws, row);
-                    ws.Cells[row, 4].Value = sumC;
-                    ws.Cells[row, 5].Value = sumA;
+                    ws.Cells[row, 4].Value = sumA;
+                    ws.Cells[row, 5].Value = sumC;
                     ws.Cells[row, 6].Value = sumT;
+                    ws.Cells[row, 7].Value = sumM;
+                    ws.Cells[row, 8].Value = sumTM;
                     row = row + 2;
                 }
                 dbconnect.Close();
@@ -354,28 +420,28 @@ namespace Assessment
 
         public void makeBorderTop(ExcelWorksheet ws, int row)
         {
-            for(int i = 1; i <= 6; i++)
+            for(int i = 1; i <=8; i++)
             {
                 ws.Cells[row, i].Style.Border.Top.Style = ExcelBorderStyle.Thin;
             }
         }
         public void makeBorderLeft(ExcelWorksheet ws, int row)
         {
-            for (int i = 1; i <= 6; i++)
+            for (int i = 1; i <= 8; i++)
             {
                 ws.Cells[row, i].Style.Border.Left.Style = ExcelBorderStyle.Thin;
             }
         }
         public void makeBorderRight(ExcelWorksheet ws, int row)
         {
-            for (int i = 1; i <= 6; i++)
+            for (int i = 1; i <= 8; i++)
             {
                 ws.Cells[row, i].Style.Border.Right.Style = ExcelBorderStyle.Thin;
             }
         }
         public void makeBorderBottom(ExcelWorksheet ws, int row)
         {
-            for (int i = 1; i <= 6; i++)
+            for (int i = 1; i <= 8; i++)
             {
                 ws.Cells[row, i].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
             }

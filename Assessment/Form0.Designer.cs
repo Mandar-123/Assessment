@@ -34,11 +34,12 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.printReport = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.button3 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.totalToCheck = new System.Windows.Forms.TextBox();
             this.panel3 = new System.Windows.Forms.Panel();
             this.button2 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
+            this.repDate = new System.Windows.Forms.Label();
             this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -88,7 +89,7 @@
             // 
             this.printReport.BackColor = System.Drawing.Color.LightGreen;
             this.printReport.Font = new System.Drawing.Font("Arial", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.printReport.Location = new System.Drawing.Point(1209, 24);
+            this.printReport.Location = new System.Drawing.Point(1245, 48);
             this.printReport.Name = "printReport";
             this.printReport.Size = new System.Drawing.Size(93, 60);
             this.printReport.TabIndex = 4;
@@ -110,6 +111,18 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(437, 266);
             this.panel2.TabIndex = 5;
+            // 
+            // button3
+            // 
+            this.button3.BackColor = System.Drawing.Color.LightSkyBlue;
+            this.button3.Font = new System.Drawing.Font("Arial", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button3.Location = new System.Drawing.Point(245, 207);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(97, 37);
+            this.button3.TabIndex = 5;
+            this.button3.Text = "Moderation";
+            this.button3.UseVisualStyleBackColor = false;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // label1
             // 
@@ -133,7 +146,7 @@
             this.panel3.BackColor = System.Drawing.Color.LavenderBlush;
             this.panel3.Location = new System.Drawing.Point(740, 204);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(583, 245);
+            this.panel3.Size = new System.Drawing.Size(550, 266);
             this.panel3.TabIndex = 6;
             // 
             // button2
@@ -147,23 +160,21 @@
             this.button2.UseVisualStyleBackColor = false;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
-            // button3
+            // repDate
             // 
-            this.button3.BackColor = System.Drawing.Color.LightSkyBlue;
-            this.button3.Font = new System.Drawing.Font("Arial", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button3.Location = new System.Drawing.Point(245, 207);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(97, 37);
-            this.button3.TabIndex = 5;
-            this.button3.Text = "Moderation";
-            this.button3.UseVisualStyleBackColor = false;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.repDate.AutoSize = true;
+            this.repDate.Font = new System.Drawing.Font("Arial", 11F);
+            this.repDate.Location = new System.Drawing.Point(1050, 12);
+            this.repDate.Name = "repDate";
+            this.repDate.Size = new System.Drawing.Size(0, 17);
+            this.repDate.TabIndex = 8;
             // 
             // Form0
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1350, 729);
+            this.Controls.Add(this.repDate);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
@@ -175,6 +186,7 @@
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -191,5 +203,6 @@
         private System.Windows.Forms.TextBox totalToCheck;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Label repDate;
     }
 }

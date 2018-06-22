@@ -129,6 +129,11 @@ namespace Assessment
             string sql;
             SQLiteCommand command;
 
+            sql = "UPDATE subject SET todayDone = 1 WHERE id = " + sid + ";";
+
+            command = new SQLiteCommand(sql, m_dbConnection);
+            command.ExecuteNonQuery();
+
             for (int i = 1; i < total_entries; i++)
             {
                 string ass, mod;
@@ -170,18 +175,24 @@ namespace Assessment
 
                 if (total - sumAllocated < 0)
                 {
-                    MessageBox.Show("Total Papers Allocated is exceeding the limit!", "Alert!");
+                    MessageBox.Show("NOT Saved! Total Papers Allocated is exceeding the limit!", "Alert!");
+                    /*
+                    
                     for(int j = i; j < total_entries; j++)
                     {
                         txtBox = panel1.Controls["alloc_" + j.ToString()] as TextBox;
                         txtBox.Text = "0";
+                        save_but_Click(sender, e);
                     }
-                    save_but_Click(sender, e);
+                    
+                    */
+                    txtBox = panel1.Controls["alloc_" + i.ToString()] as TextBox;
+                    txtBox.Focus();
                     return;
                 }
                 if (chkd > alloc)
                 {
-                    MessageBox.Show("Papers checked greater than Papers allocated!", "Alert!");
+                    MessageBox.Show("NOT Saved! Papers checked greater than Papers allocated!", "Alert!");
                     txtBox = panel1.Controls["tchkd_" + i.ToString()] as TextBox;
                     txtBox.Focus();
                     return;
@@ -249,6 +260,11 @@ namespace Assessment
             string sql;
             SQLiteCommand command;
 
+            sql = "UPDATE subject SET todayModDone = 1  WHERE id = " + sid + ";";
+
+            command = new SQLiteCommand(sql, m_dbConnection);
+            command.ExecuteNonQuery();
+
             for (int i = 1; i < total_entries; i++)
             {
                 string ass, mod;
@@ -277,17 +293,20 @@ namespace Assessment
                     alloc = Int32.Parse(txtBox.Text);
 
 
-                sql = "SELECT todayModerated FROM allocation WHERE sid = " + sid + " AND id = " + i + ";";
+                sql = "SELECT todayModerated, checked FROM allocation WHERE sid = " + sid + " AND id = " + i + ";";
                 command = new SQLiteCommand(sql, m_dbConnection);
                 SQLiteDataReader reader = command.ExecuteReader();
-                int actual_add = 0;
+                int actual_add = 0, c = 0;
                 while (reader.Read())
+                {
                     actual_add = tmode - (int)reader["todayModerated"];
+                    c = (int)reader["checked"];
+                }
+                    
                 mode = mode + actual_add;
                 sumTodayModerated += tmode;
                 sumModerated += mode;
                 sumAllocated += alloc;
-
                 if (mode > alloc)
                 {
                     MessageBox.Show("Papers moderated greater than papers allocated!", "Alert!");
@@ -295,7 +314,13 @@ namespace Assessment
                     txtBox.Focus();
                     return;
                 }
-
+                if (mode > c)
+                {
+                    MessageBox.Show("Papers moderated greater than papers checked!", "Alert!");
+                    txtBox = panel1.Controls["tmode_" + i.ToString()] as TextBox;
+                    txtBox.Focus();
+                    return;
+                }
                 sql = "UPDATE allocation SET moderator = '" + mod + "', allocated = " + alloc + ", moderated = " + mode + ", todayModerated = " + tmode + " WHERE sid =" + sid + " AND id = " + i + ";";
                 command = new SQLiteCommand(sql, m_dbConnection);
                 command.ExecuteNonQuery();
@@ -430,11 +455,6 @@ namespace Assessment
                 txtBoxStartPositionV += 30;
                 total_entries++;
             }
-
-            sql = "UPDATE subject SET todayDone = 1 where id = " + sid + ";";
-
-            command = new SQLiteCommand(sql, m_dbConnection);
-            command.ExecuteNonQuery();
 
             m_dbConnection.Close();
             newPanel.Location = new Point(0, txtBoxStartPositionV);
