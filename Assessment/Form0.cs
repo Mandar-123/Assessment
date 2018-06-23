@@ -77,18 +77,20 @@ namespace Assessment
             SQLiteDataReader reader1 = command.ExecuteReader();
             while(reader1.Read())
                 repDate.Text = "Last Report Generated on: " + (string)reader1["time"];
-            int y = 0;
+            int y = 30;
             int i = s[4] - '0';
             sql = "SELECT * FROM subject WHERE sem = " + i + " ORDER BY id;";
             command = new SQLiteCommand(sql, m_dbConnection);
             SQLiteDataReader reader = command.ExecuteReader();
-
-            panel3.Controls.Add(makeLabel(10, 10, 70, "Subject", "LavenderBlush"));
-            panel3.Controls.Add(makeLabel(80, 10, 70, "Allocated", "LavenderBlush"));
-            panel3.Controls.Add(makeLabel(150, 10, 70, "Checked", "LavenderBlush"));
-            panel3.Controls.Add(makeLabel(220, 10, 80, "Moderated", "LavenderBlush"));
-            panel3.Controls.Add(makeLabel(300, 10, 110, "Checking Entry", "LavenderBlush"));
-            panel3.Controls.Add(makeLabel(410, 10, 130, "Moderation Entry", "LavenderBlush"));
+            Label lt = makeLabel(300, 10, 240, "Today's", "LavenderBlush");
+            lt.TextAlign = ContentAlignment.MiddleCenter;
+            panel3.Controls.Add(lt);
+            panel3.Controls.Add(makeLabel(10, 40, 70, "Subject", "LavenderBlush"));
+            panel3.Controls.Add(makeLabel(80, 40, 70, "Allocated", "LavenderBlush"));
+            panel3.Controls.Add(makeLabel(150, 40, 70, "Checked", "LavenderBlush"));
+            panel3.Controls.Add(makeLabel(220, 40, 80, "Moderated", "LavenderBlush"));
+            panel3.Controls.Add(makeLabel(300, 40, 110, "Checking Entry", "LavenderBlush"));
+            panel3.Controls.Add(makeLabel(410, 40, 130, "Moderation Entry", "LavenderBlush"));
 
             string sf;
             int tc,tm,t;
@@ -221,6 +223,12 @@ namespace Assessment
 
         private void button1_Click(object sender, EventArgs e)
         {
+            if(totalToCheck.Text == "" || totalToCheck.Text == "0")
+            {
+                MessageBox.Show("Please Enter the number of papers to be allocated");
+                totalToCheck.Focus();
+                return;
+            }
             string subject = subSelect.Text;
             SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + mDbPath + ";Version=3;");
             m_dbConnection.Open();
@@ -244,10 +252,12 @@ namespace Assessment
         private void printReport_Click(object sender, EventArgs e)
         {
             string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            string f = path + "/Reports/" + acedemicYear + "\\" + exam + "\\" + branch + "\\" + s + "/" + DateTime.Today.Date.Day + "-" + DateTime.Today.Date.Month + "-" + DateTime.Today.Date.Year + ".xlsx";
+            string f = path + "/Reports/" + acedemicYear + "\\" + exam + "\\" + branch + "\\" + s + "/" + DateTime.Now.ToShortDateString() + "/Assesment Details.xlsx";
             bool res = WriteExcel(f, mDbPath);
             if (res == false)
                 return;
+            f = path + "/Reports/" + acedemicYear + "\\" + exam + "\\" + branch + "\\" + s + "/" + DateTime.Now.ToShortDateString() + "/Report.xlsx";
+            WriteRemainingExcel(f, mDbPath);
             SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + mDbPath + ";Version=3;");
             m_dbConnection.Open();
             string sql = "UPDATE allocation SET todayChecked = 0, todayModerated = 0;";
@@ -276,7 +286,7 @@ namespace Assessment
                     return false;
                 }       
             }
-            string dir = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "/Reports/" + acedemicYear + "\\" + exam + "\\" + branch + "\\" + s;
+            string dir = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "/Reports/" + acedemicYear + "\\" + exam + "\\" + branch + "\\" + s + "/" + DateTime.Now.ToShortDateString();
             if (!Directory.Exists(dir))
             {
                 Directory.CreateDirectory(dir);
@@ -330,10 +340,10 @@ namespace Assessment
                     ws.Cells[row, 7].AutoFitColumns();
                     ws.Cells[row, 8].Value = "Moderated Today";
                     ws.Cells[row, 8].AutoFitColumns();
-                    makeBorderTop(ws, row);
-                    makeBorderBottom(ws, row);
-                    makeBorderLeft(ws, row);
-                    makeBorderRight(ws, row);
+                    makeBorderTop(ws, row, 8);
+                    makeBorderBottom(ws, row, 8);
+                    makeBorderLeft(ws, row, 8);
+                    makeBorderRight(ws, row, 8);
                     ws.Cells[row, 1, row, 8].Style.Font.Bold = true;
                     row++;
 
@@ -366,15 +376,15 @@ namespace Assessment
                         sumM = sumM + (int)reader2[3];
                         ws.Cells[row, 8].Value = reader2[6];
                         sumTM = sumTM + (int)reader2[4];
-                        makeBorderLeft(ws, row);
-                        makeBorderRight(ws, row);
+                        makeBorderLeft(ws, row, 8);
+                        makeBorderRight(ws, row, 8);
                         row++;
                         c++;
                     }
-                    makeBorderTop(ws, row);
-                    makeBorderBottom(ws, row);
-                    makeBorderLeft(ws, row);
-                    makeBorderRight(ws, row);
+                    makeBorderTop(ws, row, 8);
+                    makeBorderBottom(ws, row, 8);
+                    makeBorderLeft(ws, row, 8);
+                    makeBorderRight(ws, row, 8);
                     ws.Cells[row, 4].Value = sumA;
                     ws.Cells[row, 5].Value = sumC;
                     ws.Cells[row, 6].Value = sumT;
@@ -382,6 +392,109 @@ namespace Assessment
                     ws.Cells[row, 8].Value = sumTM;
                     row = row + 2;
                 }
+                dbconnect.Close();
+                p.Save();
+            }
+            return true;
+        }
+
+        public bool WriteRemainingExcel(string filename, string database)
+        {
+            if (File.Exists(filename))
+            {
+                try
+                {
+                    File.Delete(filename);
+                }
+                catch
+                {
+                    MessageBox.Show("Please Close the previous Report !");
+                    return false;
+                }
+            }
+            string dir = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "/Reports/" + acedemicYear + "\\" + exam + "\\" + branch + "\\" + s + "/" + DateTime.Now.ToShortDateString();
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
+            FileInfo file = new FileInfo(filename);
+            SQLiteConnection dbconnect = new SQLiteConnection("Data Source=" + database + ";Version=3;");
+
+            using (var p = new ExcelPackage(file))
+            {
+                int i = s[4] - '0';
+                dbconnect.Open();
+                int row = 1;
+                var ws = p.Workbook.Worksheets.Add("Report");
+
+                string sql = "SELECT * FROM subject WHERE sem = " + i + " ORDER BY id;";
+
+                SQLiteCommand command = new SQLiteCommand(sql, dbconnect);
+                SQLiteDataReader reader = command.ExecuteReader();
+
+                ws.Cells[row, 1, row, 4].Merge = true;
+                ws.Cells[row, 1, row, 4].Value = branch + " (" + exam + ") " + "SEM " + i.ToString() + " - " + DateTime.Today.Date.Day + "/" + DateTime.Today.Date.Month + "/" + DateTime.Today.Date.Year;
+                ws.Cells[row, 1, row, 4].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                ws.Cells[row, 1, row, 4].Style.Font.Size = 14;
+                ws.Cells[row, 1, row, 4].Style.Font.Bold = true;
+                row = row + 2;
+
+                ws.Cells[row, 1].Value = "Subject";
+                ws.Cells[row, 1].Style.Font.Size = 12;
+                ws.Cells[row, 1].Style.Font.Bold = true;
+                ws.Cells[row, 1].AutoFitColumns();
+                ws.Cells[row, 2].Value = "Allocated";
+                ws.Cells[row, 2].Style.Font.Size = 12;
+                ws.Cells[row, 2].Style.Font.Bold = true;
+                ws.Cells[row, 2].AutoFitColumns();
+                ws.Cells[row, 3].Value = "Checked";
+                ws.Cells[row, 3].Style.Font.Size = 12;
+                ws.Cells[row, 3].Style.Font.Bold = true;
+                ws.Cells[row, 3].AutoFitColumns();
+                ws.Cells[row, 4].Value = "Moderated";
+                ws.Cells[row, 4].Style.Font.Size = 12;
+                ws.Cells[row, 4].Style.Font.Bold = true;
+                ws.Cells[row, 4].AutoFitColumns();
+                makeBorderTop(ws, row, 4);
+                makeBorderBottom(ws, row, 4);
+                makeBorderLeft(ws, row, 4);
+                makeBorderRight(ws, row, 4);
+
+                row = row + 1;
+
+                string sname;
+                int t;
+                int max1 = 7;
+                while (reader.Read())
+                {
+                    sname = (string)reader["name"];
+                    t = (int)reader["total"];
+                    sql = "SELECT * FROM allocation WHERE sid = " + (int)reader["id"] + ";";
+                    SQLiteCommand command2 = new SQLiteCommand(sql, dbconnect);
+                    SQLiteDataReader reader2 = command2.ExecuteReader();
+                    int sumC = 0, sumA = 0, sumM = 0;
+                    while (reader2.Read())
+                    {
+                        sumC = sumC + (int)reader2["checked"];
+                        sumA = sumA + (int)reader2["allocated"];
+                        sumM = sumM + (int)reader2["moderated"];
+                    }
+                    ws.Cells[row, 1].Value = sname;
+                    if (sname.Length > max1)
+                    {
+                        ws.Cells[row, 1].AutoFitColumns();
+                        max1 = sname.Length;
+                    }
+                    ws.Cells[row, 2].Value = sumA.ToString() + "/" + t.ToString();
+                    ws.Cells[row, 3].Value = sumC.ToString() + "/" + sumA.ToString();
+                    ws.Cells[row, 4].Value = sumM.ToString() + "/" + sumC.ToString();
+                    makeBorderTop(ws, row, 4);
+                    makeBorderBottom(ws, row, 4);
+                    makeBorderLeft(ws, row, 4);
+                    makeBorderRight(ws, row, 4);
+                    row++;
+                }
+
                 dbconnect.Close();
                 p.Save();
             }
@@ -418,30 +531,30 @@ namespace Assessment
             this.Close();
         }
 
-        public void makeBorderTop(ExcelWorksheet ws, int row)
+        public void makeBorderTop(ExcelWorksheet ws, int row, int col)
         {
-            for(int i = 1; i <=8; i++)
+            for(int i = 1; i <=col; i++)
             {
                 ws.Cells[row, i].Style.Border.Top.Style = ExcelBorderStyle.Thin;
             }
         }
-        public void makeBorderLeft(ExcelWorksheet ws, int row)
+        public void makeBorderLeft(ExcelWorksheet ws, int row, int col)
         {
-            for (int i = 1; i <= 8; i++)
+            for (int i = 1; i <= col; i++)
             {
                 ws.Cells[row, i].Style.Border.Left.Style = ExcelBorderStyle.Thin;
             }
         }
-        public void makeBorderRight(ExcelWorksheet ws, int row)
+        public void makeBorderRight(ExcelWorksheet ws, int row, int col)
         {
-            for (int i = 1; i <= 8; i++)
+            for (int i = 1; i <= col; i++)
             {
                 ws.Cells[row, i].Style.Border.Right.Style = ExcelBorderStyle.Thin;
             }
         }
-        public void makeBorderBottom(ExcelWorksheet ws, int row)
+        public void makeBorderBottom(ExcelWorksheet ws, int row, int col)
         {
-            for (int i = 1; i <= 8; i++)
+            for (int i = 1; i <= col; i++)
             {
                 ws.Cells[row, i].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
             }

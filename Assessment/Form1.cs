@@ -175,18 +175,10 @@ namespace Assessment
 
                 if (total - sumAllocated < 0)
                 {
-                    MessageBox.Show("NOT Saved! Total Papers Allocated is exceeding the limit!", "Alert!");
-                    /*
-                    
-                    for(int j = i; j < total_entries; j++)
-                    {
-                        txtBox = panel1.Controls["alloc_" + j.ToString()] as TextBox;
-                        txtBox.Text = "0";
-                        save_but_Click(sender, e);
-                    }
-                    
-                    */
+                    int maxAlloc = alloc - (sumAllocated - total);
+                    MessageBox.Show("NOT SAVED ! Total Papers Allocated is exceeding the limit! Maximum " + maxAlloc.ToString() + " Papers can be allocated", "Alert!");
                     txtBox = panel1.Controls["alloc_" + i.ToString()] as TextBox;
+                    txtBox.Text = maxAlloc.ToString();
                     txtBox.Focus();
                     return;
                 }
@@ -309,14 +301,14 @@ namespace Assessment
                 sumAllocated += alloc;
                 if (mode > alloc)
                 {
-                    MessageBox.Show("Papers moderated greater than papers allocated!", "Alert!");
+                    MessageBox.Show("NOT SAVED! Papers moderated greater than papers allocated!", "Alert!");
                     txtBox = panel1.Controls["tmode_" + i.ToString()] as TextBox;
                     txtBox.Focus();
                     return;
                 }
                 if (mode > c)
                 {
-                    MessageBox.Show("Papers moderated greater than papers checked!", "Alert!");
+                    MessageBox.Show("NOT SAVED! Papers moderated greater than papers checked!", "Alert!");
                     txtBox = panel1.Controls["tmode_" + i.ToString()] as TextBox;
                     txtBox.Focus();
                     return;
@@ -384,6 +376,26 @@ namespace Assessment
                 return;
             }
 
+            int sumAllocated = 0;
+            for (int i = 1; i < total_entries; i++)
+            {
+                int Ialloc;
+                TextBox txtBox1 = panel1.Controls["alloc_" + i.ToString()] as TextBox;
+                if (txtBox1.Text == "")
+                {
+                    Ialloc = 0;
+                }
+                else
+                    Ialloc = Int32.Parse(txtBox1.Text);
+                sumAllocated += Ialloc;
+            }
+            if((sumAllocated + alloc) > total)
+            {
+                MessageBox.Show("Maximum " + (total - sumAllocated).ToString() +" can be allocated!");
+                txtBox = newPanel.Controls["new_alloc"] as TextBox;
+                txtBox.Focus();
+                return;
+            }
             string sql = "INSERT into allocation (sid, id, assessor, moderator, allocated, checked, todayChecked, moderated, todayModerated) values (" + sid + ", " + total_entries + ", '" + ass + "', '" + mod + "', " + alloc + ", " + chkd + ", " + tchkd + ", 0, 0);";
             SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
             try
@@ -437,7 +449,7 @@ namespace Assessment
                 else
                 {
                     panel1.Controls.Add(makeBox(txtBoxStartPosition, txtBoxStartPositionV, 250, t_mod, "mod_" + t_id.ToString(), true, false));
-                    panel1.Controls.Add(makeBox(txtBoxStartPosition + 250 + d, txtBoxStartPositionV, 250, t_ass, "ass_" + t_id.ToString(), false, false));
+                    panel1.Controls.Add(makeBox(txtBoxStartPosition + 250 + d, txtBoxStartPositionV, 250, t_ass + "(" + t_chkd + ")", "ass_" + t_id.ToString(), false, false));
                 }
                 if (cORm == "Checking")
                     panel1.Controls.Add(makeBox(txtBoxStartPosition + 500 + 2 * d, txtBoxStartPositionV, 50, t_chkd.ToString(), "chkd_" + t_id.ToString(), false, true));
