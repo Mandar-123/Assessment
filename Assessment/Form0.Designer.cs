@@ -144,9 +144,9 @@
             // panel3
             // 
             this.panel3.BackColor = System.Drawing.Color.LavenderBlush;
-            this.panel3.Location = new System.Drawing.Point(740, 204);
+            this.panel3.Location = new System.Drawing.Point(717, 204);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(550, 266);
+            this.panel3.Size = new System.Drawing.Size(597, 266);
             this.panel3.TabIndex = 6;
             // 
             // button2
@@ -164,7 +164,7 @@
             // 
             this.repDate.AutoSize = true;
             this.repDate.Font = new System.Drawing.Font("Arial", 11F);
-            this.repDate.Location = new System.Drawing.Point(1050, 12);
+            this.repDate.Location = new System.Drawing.Point(1023, 12);
             this.repDate.Name = "repDate";
             this.repDate.Size = new System.Drawing.Size(0, 17);
             this.repDate.TabIndex = 8;
@@ -181,7 +181,7 @@
             this.Controls.Add(this.printReport);
             this.Controls.Add(this.panel1);
             this.Name = "Form0";
-            this.Text = "Form0";
+            this.Text = "Paper Assesment";
             this.Load += new System.EventHandler(this.Form0_Load);
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();

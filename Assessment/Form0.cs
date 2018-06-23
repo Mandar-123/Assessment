@@ -82,15 +82,13 @@ namespace Assessment
             sql = "SELECT * FROM subject WHERE sem = " + i + " ORDER BY id;";
             command = new SQLiteCommand(sql, m_dbConnection);
             SQLiteDataReader reader = command.ExecuteReader();
-            Label lt = makeLabel(300, 10, 240, "Today's", "LavenderBlush");
-            lt.TextAlign = ContentAlignment.MiddleCenter;
-            panel3.Controls.Add(lt);
-            panel3.Controls.Add(makeLabel(10, 40, 70, "Subject", "LavenderBlush"));
-            panel3.Controls.Add(makeLabel(80, 40, 70, "Allocated", "LavenderBlush"));
-            panel3.Controls.Add(makeLabel(150, 40, 70, "Checked", "LavenderBlush"));
-            panel3.Controls.Add(makeLabel(220, 40, 80, "Moderated", "LavenderBlush"));
-            panel3.Controls.Add(makeLabel(300, 40, 110, "Checking Entry", "LavenderBlush"));
-            panel3.Controls.Add(makeLabel(410, 40, 130, "Moderation Entry", "LavenderBlush"));
+            panel3.Controls.Add(makeLabel(330, 10, 260, "Today's", "LavenderBlush", true));
+            panel3.Controls.Add(makeLabel(10, 40, 70, "Subject", "LavenderBlush", true));
+            panel3.Controls.Add(makeLabel(80, 40, 80, "Allocated", "LavenderBlush", true));
+            panel3.Controls.Add(makeLabel(160, 40, 80, "Checked", "LavenderBlush", true));
+            panel3.Controls.Add(makeLabel(240, 40, 90, "Moderated", "LavenderBlush", true));
+            panel3.Controls.Add(makeLabel(330, 40, 120, "Checking Entry", "LavenderBlush", true));
+            panel3.Controls.Add(makeLabel(450, 40, 140, "Moderation Entry", "LavenderBlush", true));
 
             string sf;
             int tc,tm,t;
@@ -111,31 +109,35 @@ namespace Assessment
                     sumA = sumA + (int)reader2["allocated"];
                     sumM = sumM + (int)reader2["moderated"];
                 }
-                panel3.Controls.Add(makeLabel(10, 10 + y, 70, sf, "LavenderBlush"));
-                panel3.Controls.Add(makeLabel(80, 10 + y, 70, sumA.ToString() + "/" + t.ToString(), "LavenderBlush"));
-                panel3.Controls.Add(makeLabel(150, 10 + y, 70, sumC.ToString() + "/" + sumA.ToString(), "LavenderBlush"));
-                panel3.Controls.Add(makeLabel(220, 10 + y, 80, sumM.ToString() + "/" + sumC.ToString(), "LavenderBlush"));
+                panel3.Controls.Add(makeLabel(10, 10 + y, 70, sf, "LavenderBlush", true));
+                panel3.Controls.Add(makeLabel(80, 10 + y, 80, sumA.ToString() + "/" + t.ToString(), "LavenderBlush", false));
+                panel3.Controls.Add(makeLabel(160, 10 + y, 80, sumC.ToString() + "/" + sumA.ToString(), "LavenderBlush", false));
+                panel3.Controls.Add(makeLabel(240, 10 + y, 90, sumM.ToString() + "/" + sumC.ToString(), "LavenderBlush", false));
                 if(tc == 1)
                 {
-                    Label l = makeLabel(300, 10 + y, 110, "✓", "LavenderBlush");
+                    Label l = makeLabel(330, 10 + y, 120, "✓", "LavenderBlush", true);
                     l.ForeColor = Color.Green;
+                    l.Font = new Font("Arial", 18, FontStyle.Bold);
                     panel3.Controls.Add(l);
                 } else
                 {
-                    Label l = makeLabel(300, 10 + y, 110, "X", "LavenderBlush");
+                    Label l = makeLabel(330, 10 + y, 120, "X", "LavenderBlush", true);
                     l.ForeColor = Color.Red;
+                    l.Font = new Font("Arial", 12, FontStyle.Bold);
                     panel3.Controls.Add(l);
                 }
                 if (tm == 1)
                 {
-                    Label l = makeLabel(410, 10 + y, 130, "✓", "LavenderBlush");
+                    Label l = makeLabel(450, 10 + y, 140, "✓", "LavenderBlush", true);
                     l.ForeColor = Color.Green;
+                    l.Font = new Font("Arial", 18, FontStyle.Bold);
                     panel3.Controls.Add(l);
                 }
                 else
                 {
-                    Label l = makeLabel(410, 10 + y, 130, "X", "LavenderBlush");
+                    Label l = makeLabel(450, 10 + y, 140, "X", "LavenderBlush", true);
                     l.ForeColor = Color.Red;
+                    l.Font = new Font("Arial", 12, FontStyle.Bold);
                     panel3.Controls.Add(l);
                 }
             }
@@ -163,12 +165,15 @@ namespace Assessment
             m_dbConnection1.Close();
             m_dbConnection2.Close();
         }
-        public static Label makeLabel(int xLoc, int yLoc, int xSize, string t, string color)
+        public static Label makeLabel(int xLoc, int yLoc, int xSize, string t, string color, bool bold)
         {
             Label newLabel = new Label();
             newLabel.Location = new System.Drawing.Point(xLoc, yLoc);
             newLabel.Size = new System.Drawing.Size(xSize, 30);
-            newLabel.Font = new Font("Arial", 11);
+            if(bold == false)
+                newLabel.Font = new Font("Arial", 11);
+            else
+                newLabel.Font = new Font("Arial", 10, FontStyle.Bold);
             if (color == "green")
                 newLabel.BackColor = Color.Green;
             else if (color == "red")
@@ -177,6 +182,7 @@ namespace Assessment
             newLabel.AutoSize = false;
             newLabel.Text = t;
             newLabel.BorderStyle = BorderStyle.FixedSingle;
+            newLabel.TextAlign = ContentAlignment.MiddleCenter;
             return newLabel;
         }
         private void semSelect_SelectedIndexChanged(object sender, EventArgs e)
@@ -511,6 +517,13 @@ namespace Assessment
 
         private void button3_Click(object sender, EventArgs e)
         {
+            if (totalToCheck.Text == "" || totalToCheck.Text == "0")
+            {
+                MessageBox.Show("Please Enter the number of papers to be allocated");
+                totalToCheck.Focus();
+                return;
+            }
+
             string subject = subSelect.Text;
             SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + mDbPath + ";Version=3;");
             m_dbConnection.Open();

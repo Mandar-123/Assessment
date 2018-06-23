@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
+            this.saveMod = new System.Windows.Forms.Button();
             this.newPanel = new System.Windows.Forms.Panel();
             this.sumT = new System.Windows.Forms.Label();
             this.sumC = new System.Windows.Forms.Label();
@@ -43,7 +44,6 @@
             this.save_but = new System.Windows.Forms.Button();
             this.backBut = new System.Windows.Forms.Button();
             this.rem = new System.Windows.Forms.Label();
-            this.saveMod = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.newPanel.SuspendLayout();
             this.SuspendLayout();
@@ -60,6 +60,18 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1216, 620);
             this.panel1.TabIndex = 0;
+            // 
+            // saveMod
+            // 
+            this.saveMod.BackColor = System.Drawing.Color.LightSkyBlue;
+            this.saveMod.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.saveMod.Location = new System.Drawing.Point(556, 450);
+            this.saveMod.Name = "saveMod";
+            this.saveMod.Size = new System.Drawing.Size(100, 41);
+            this.saveMod.TabIndex = 2;
+            this.saveMod.Text = "Save";
+            this.saveMod.UseVisualStyleBackColor = false;
+            this.saveMod.Click += new System.EventHandler(this.saveMod_Click);
             // 
             // newPanel
             // 
@@ -199,22 +211,10 @@
             // rem
             // 
             this.rem.Font = new System.Drawing.Font("Arial Narrow", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rem.Location = new System.Drawing.Point(1156, 29);
+            this.rem.Location = new System.Drawing.Point(1156, 40);
             this.rem.Name = "rem";
             this.rem.Size = new System.Drawing.Size(163, 23);
             this.rem.TabIndex = 2;
-            // 
-            // saveMod
-            // 
-            this.saveMod.BackColor = System.Drawing.Color.LightSkyBlue;
-            this.saveMod.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.saveMod.Location = new System.Drawing.Point(556, 450);
-            this.saveMod.Name = "saveMod";
-            this.saveMod.Size = new System.Drawing.Size(100, 41);
-            this.saveMod.TabIndex = 2;
-            this.saveMod.Text = "Save";
-            this.saveMod.UseVisualStyleBackColor = false;
-            this.saveMod.Click += new System.EventHandler(this.saveMod_Click);
             // 
             // Form1
             // 
@@ -227,7 +227,7 @@
             this.Controls.Add(this.panel1);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Form1";
+            this.Text = "Paper Assessment";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.panel1.ResumeLayout(false);
             this.newPanel.ResumeLayout(false);

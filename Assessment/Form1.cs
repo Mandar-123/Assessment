@@ -46,11 +46,13 @@ namespace Assessment
         private void Form1_Load(object sender, EventArgs e)
         {
             this.WindowState = FormWindowState.Maximized;
-            this.Controls.Add(makeLabel(75, 40, 400, name + " (" + sem + ")"));
+            Label ltop = makeLabel(75, 40, 400, name + " (" + sem + " - " + branch + ")");
+            ltop.Font = new Font("Arial", 11, FontStyle.Bold);
+            this.Controls.Add(ltop);
             if (cORm == "Moderation")
             {
                 panel1.Controls.Add(makeLabel(txtBoxStartPosition, txtBoxStartPositionV, 250, "Moderator"));
-                panel1.Controls.Add(makeLabel(txtBoxStartPosition + 250 + d, txtBoxStartPositionV, 250, "Assessor"));
+                panel1.Controls.Add(makeLabel(txtBoxStartPosition + 250 + d, txtBoxStartPositionV, 250, "Assessor (Checked)"));
             }
             else
             {
@@ -214,6 +216,7 @@ namespace Assessment
             sumA.Text = sumAllocated.ToString();
             sumT.Text = sumTodayChecked.ToString();
             rem.Text = "To be allocated: " + (total - sumAllocated).ToString();
+            rem.Font = new Font("Arial", 11, FontStyle.Bold);
         }
 
         private void new_chkd_TextChanged(object sender, EventArgs e)
@@ -299,6 +302,12 @@ namespace Assessment
                 sumTodayModerated += tmode;
                 sumModerated += mode;
                 sumAllocated += alloc;
+
+                if (mod == "" && mode != 0)
+                {
+                    MessageBox.Show("Please Enter the name of Moderator!");
+                    return;
+                }
                 if (mode > alloc)
                 {
                     MessageBox.Show("NOT SAVED! Papers moderated greater than papers allocated!", "Alert!");
@@ -313,6 +322,7 @@ namespace Assessment
                     txtBox.Focus();
                     return;
                 }
+                
                 sql = "UPDATE allocation SET moderator = '" + mod + "', allocated = " + alloc + ", moderated = " + mode + ", todayModerated = " + tmode + " WHERE sid =" + sid + " AND id = " + i + ";";
                 command = new SQLiteCommand(sql, m_dbConnection);
                 command.ExecuteNonQuery();
@@ -449,7 +459,7 @@ namespace Assessment
                 else
                 {
                     panel1.Controls.Add(makeBox(txtBoxStartPosition, txtBoxStartPositionV, 250, t_mod, "mod_" + t_id.ToString(), true, false));
-                    panel1.Controls.Add(makeBox(txtBoxStartPosition + 250 + d, txtBoxStartPositionV, 250, t_ass + "(" + t_chkd + ")", "ass_" + t_id.ToString(), false, false));
+                    panel1.Controls.Add(makeBox(txtBoxStartPosition + 250 + d, txtBoxStartPositionV, 250, t_ass + " (" + t_chkd + ")", "ass_" + t_id.ToString(), false, false));
                 }
                 if (cORm == "Checking")
                     panel1.Controls.Add(makeBox(txtBoxStartPosition + 500 + 2 * d, txtBoxStartPositionV, 50, t_chkd.ToString(), "chkd_" + t_id.ToString(), false, true));
