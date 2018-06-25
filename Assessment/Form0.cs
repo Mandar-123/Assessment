@@ -229,7 +229,7 @@ namespace Assessment
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if(totalToCheck.Text == "" || totalToCheck.Text == "0")
+            if(totalToCheck.Text == "" || Int32.Parse(totalToCheck.Text) == 0)
             {
                 MessageBox.Show("Please Enter the number of papers to be allocated");
                 totalToCheck.Focus();
@@ -299,11 +299,10 @@ namespace Assessment
             }
             FileInfo file = new FileInfo(filename);
             SQLiteConnection dbconnect = new SQLiteConnection("Data Source=" + database + ";Version=3;");
-
+            int max2 = 10, max3 = 10;
             using (var p = new ExcelPackage(file))
             {
                 int i = s[4] - '0';
-                int max2 = 10, max3 = 10;
                 dbconnect.Open();
                 int row = 1;
                 var ws = p.Workbook.Worksheets.Add("Report");
@@ -333,9 +332,7 @@ namespace Assessment
                     ws.Cells[row, 1].Value = "Sr No.";
                     ws.Cells[row, 1].AutoFitColumns();
                     ws.Cells[row, 2].Value = "Assessor";
-                    ws.Cells[row, 2].AutoFitColumns();
                     ws.Cells[row, 3].Value = "Moderator";
-                    ws.Cells[row, 3].AutoFitColumns();
                     ws.Cells[row, 4].Value = "Allocated";
                     ws.Cells[row, 4].AutoFitColumns();
                     ws.Cells[row, 5].Value = "Total Checked";
@@ -364,6 +361,7 @@ namespace Assessment
                         {
                             ws.Cells[row, 2].AutoFitColumns();
                             max2 = t;
+                            MessageBox.Show(t.ToString());
                         }
                         t = ((string)reader2[1]).Length;
                         ws.Cells[row, 3].Value = reader2[1];
@@ -379,9 +377,9 @@ namespace Assessment
                         ws.Cells[row, 6].Value = reader2[4];
                         sumT = sumT + (int)reader2[4];
                         ws.Cells[row, 7].Value = reader2[5];
-                        sumM = sumM + (int)reader2[3];
+                        sumM = sumM + (int)reader2[5];
                         ws.Cells[row, 8].Value = reader2[6];
-                        sumTM = sumTM + (int)reader2[4];
+                        sumTM = sumTM + (int)reader2[6];
                         makeBorderLeft(ws, row, 8);
                         makeBorderRight(ws, row, 8);
                         row++;
@@ -517,7 +515,7 @@ namespace Assessment
 
         private void button3_Click(object sender, EventArgs e)
         {
-            if (totalToCheck.Text == "" || totalToCheck.Text == "0")
+            if (totalToCheck.Text == "" || Int32.Parse(totalToCheck.Text) == 0)
             {
                 MessageBox.Show("Please Enter the number of papers to be allocated");
                 totalToCheck.Focus();
@@ -542,6 +540,15 @@ namespace Assessment
             this.Hide();
             fr.ShowDialog();
             this.Close();
+        }
+
+        private void totalToCheck_TextChanged(object sender, EventArgs e)
+        {
+            if (System.Text.RegularExpressions.Regex.IsMatch(totalToCheck.Text, "[^0-9]"))
+            {
+                MessageBox.Show("Please enter numbers only.");
+                totalToCheck.Text = totalToCheck.Text.Remove(totalToCheck.Text.Length - 1);
+            }
         }
 
         public void makeBorderTop(ExcelWorksheet ws, int row, int col)

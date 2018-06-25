@@ -29,6 +29,10 @@
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.sumTML = new System.Windows.Forms.Label();
+            this.sumAL = new System.Windows.Forms.Label();
+            this.sumML = new System.Windows.Forms.Label();
             this.saveMod = new System.Windows.Forms.Button();
             this.newPanel = new System.Windows.Forms.Panel();
             this.sumT = new System.Windows.Forms.Label();
@@ -45,6 +49,7 @@
             this.backBut = new System.Windows.Forms.Button();
             this.rem = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.newPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -53,7 +58,7 @@
             this.panel1.AutoScroll = true;
             this.panel1.BackColor = System.Drawing.Color.LavenderBlush;
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel1.Controls.Add(this.saveMod);
+            this.panel1.Controls.Add(this.panel2);
             this.panel1.Controls.Add(this.newPanel);
             this.panel1.Location = new System.Drawing.Point(75, 77);
             this.panel1.Margin = new System.Windows.Forms.Padding(0);
@@ -61,13 +66,52 @@
             this.panel1.Size = new System.Drawing.Size(1216, 620);
             this.panel1.TabIndex = 0;
             // 
+            // panel2
+            // 
+            this.panel2.BackColor = System.Drawing.Color.LavenderBlush;
+            this.panel2.Controls.Add(this.sumTML);
+            this.panel2.Controls.Add(this.sumAL);
+            this.panel2.Controls.Add(this.sumML);
+            this.panel2.Controls.Add(this.saveMod);
+            this.panel2.Location = new System.Drawing.Point(0, 482);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(1084, 95);
+            this.panel2.TabIndex = 3;
+            // 
+            // sumTML
+            // 
+            this.sumTML.AutoSize = true;
+            this.sumTML.Font = new System.Drawing.Font("Arial", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.sumTML.Location = new System.Drawing.Point(960, 14);
+            this.sumTML.Name = "sumTML";
+            this.sumTML.Size = new System.Drawing.Size(0, 17);
+            this.sumTML.TabIndex = 5;
+            // 
+            // sumAL
+            // 
+            this.sumAL.AutoSize = true;
+            this.sumAL.Font = new System.Drawing.Font("Arial", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.sumAL.Location = new System.Drawing.Point(832, 14);
+            this.sumAL.Name = "sumAL";
+            this.sumAL.Size = new System.Drawing.Size(0, 17);
+            this.sumAL.TabIndex = 4;
+            // 
+            // sumML
+            // 
+            this.sumML.AutoSize = true;
+            this.sumML.Font = new System.Drawing.Font("Arial", 11F);
+            this.sumML.Location = new System.Drawing.Point(651, 14);
+            this.sumML.Name = "sumML";
+            this.sumML.Size = new System.Drawing.Size(0, 17);
+            this.sumML.TabIndex = 3;
+            // 
             // saveMod
             // 
             this.saveMod.BackColor = System.Drawing.Color.LightSkyBlue;
             this.saveMod.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.saveMod.Location = new System.Drawing.Point(556, 450);
+            this.saveMod.Location = new System.Drawing.Point(551, 51);
             this.saveMod.Name = "saveMod";
-            this.saveMod.Size = new System.Drawing.Size(100, 41);
+            this.saveMod.Size = new System.Drawing.Size(100, 40);
             this.saveMod.TabIndex = 2;
             this.saveMod.Text = "Save";
             this.saveMod.UseVisualStyleBackColor = false;
@@ -230,6 +274,8 @@
             this.Text = "Paper Assessment";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.panel1.ResumeLayout(false);
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
             this.newPanel.ResumeLayout(false);
             this.newPanel.PerformLayout();
             this.ResumeLayout(false);
@@ -254,6 +300,10 @@
         private System.Windows.Forms.Button backBut;
         private System.Windows.Forms.Label rem;
         private System.Windows.Forms.Button saveMod;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Label sumTML;
+        private System.Windows.Forms.Label sumAL;
+        private System.Windows.Forms.Label sumML;
     }
 }
 

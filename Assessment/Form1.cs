@@ -79,7 +79,7 @@ namespace Assessment
             load();
             if (cORm == "Checking")
             {
-                saveMod.Hide();
+                panel2.Hide();
                 save_but_Click(sender, e);
             }
             else
@@ -330,9 +330,9 @@ namespace Assessment
                 txtBox.Text = mode.ToString();
             }
             m_dbConnection.Close();
-            sumC.Text = sumModerated.ToString();
-            sumA.Text = sumAllocated.ToString();
-            sumT.Text = sumTodayModerated.ToString();
+            sumML.Text = sumModerated.ToString();
+            sumAL.Text = sumAllocated.ToString();
+            sumTML.Text = sumTodayModerated.ToString();
         }
 
         private void addNew_Click(object sender, EventArgs e)
@@ -480,7 +480,7 @@ namespace Assessment
 
             m_dbConnection.Close();
             newPanel.Location = new Point(0, txtBoxStartPositionV);
-            saveMod.Location = new Point(540, txtBoxStartPositionV + 30);
+            panel2.Location = new Point(0, txtBoxStartPositionV);
         }
 
         private void backBut_Click(object sender, EventArgs e)

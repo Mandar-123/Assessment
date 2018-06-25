@@ -140,6 +140,7 @@
             this.totalToCheck.Name = "totalToCheck";
             this.totalToCheck.Size = new System.Drawing.Size(56, 24);
             this.totalToCheck.TabIndex = 3;
+            this.totalToCheck.TextChanged += new System.EventHandler(this.totalToCheck_TextChanged);
             // 
             // panel3
             // 
