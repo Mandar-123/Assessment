@@ -82,22 +82,20 @@ namespace Assessment
             sql = "SELECT * FROM subject WHERE sem = " + i + " ORDER BY id;";
             command = new SQLiteCommand(sql, m_dbConnection);
             SQLiteDataReader reader = command.ExecuteReader();
-            panel3.Controls.Add(makeLabel(330, 10, 260, "Today's", "LavenderBlush", true));
             panel3.Controls.Add(makeLabel(10, 40, 70, "Subject", "LavenderBlush", true));
-            panel3.Controls.Add(makeLabel(80, 40, 80, "Allocated", "LavenderBlush", true));
-            panel3.Controls.Add(makeLabel(160, 40, 80, "Checked", "LavenderBlush", true));
-            panel3.Controls.Add(makeLabel(240, 40, 90, "Moderated", "LavenderBlush", true));
-            panel3.Controls.Add(makeLabel(330, 40, 120, "Checking Entry", "LavenderBlush", true));
-            panel3.Controls.Add(makeLabel(450, 40, 140, "Moderation Entry", "LavenderBlush", true));
+            panel3.Controls.Add(makeLabel(80, 40, 80, "Available", "LavenderBlush", true));
+            panel3.Controls.Add(makeLabel(160, 40, 80, "Allocated", "LavenderBlush", true));
+            panel3.Controls.Add(makeLabel(240, 40, 80, "Checked", "LavenderBlush", true));
+            panel3.Controls.Add(makeLabel(320, 40, 120, "To be Checked", "LavenderBlush", true));
+            panel3.Controls.Add(makeLabel(440, 40, 90, "Moderated", "LavenderBlush", true));
+            panel3.Controls.Add(makeLabel(530, 40, 140, "To be Moderated", "LavenderBlush", true));
 
             string sf;
-            int tc,tm,t;
+            int t;
             while (reader.Read())
             {
                 y = y + 30;
                 sf = (string)reader["sf"];
-                tc = (int)reader["todayDone"];
-                tm = (int)reader["todayModDone"];
                 t = (int)reader["total"];
                 sql = "SELECT * FROM allocation WHERE sid = " + (int)reader["id"] + ";";
                 SQLiteCommand command2 = new SQLiteCommand(sql, m_dbConnection);
@@ -109,37 +107,16 @@ namespace Assessment
                     sumA = sumA + (int)reader2["allocated"];
                     sumM = sumM + (int)reader2["moderated"];
                 }
+                int avail = Int32.Parse(t.ToString()) - sumA;
+                int toBeChecked = sumA - sumC;
+                int toBeModerated = sumC - sumM;
                 panel3.Controls.Add(makeLabel(10, 10 + y, 70, sf, "LavenderBlush", true));
-                panel3.Controls.Add(makeLabel(80, 10 + y, 80, sumA.ToString() + "/" + t.ToString(), "LavenderBlush", false));
-                panel3.Controls.Add(makeLabel(160, 10 + y, 80, sumC.ToString() + "/" + sumA.ToString(), "LavenderBlush", false));
-                panel3.Controls.Add(makeLabel(240, 10 + y, 90, sumM.ToString() + "/" + sumC.ToString(), "LavenderBlush", false));
-                if(tc == 1)
-                {
-                    Label l = makeLabel(330, 10 + y, 120, "✓", "LavenderBlush", true);
-                    l.ForeColor = Color.Green;
-                    l.Font = new Font("Arial", 18, FontStyle.Bold);
-                    panel3.Controls.Add(l);
-                } else
-                {
-                    Label l = makeLabel(330, 10 + y, 120, "X", "LavenderBlush", true);
-                    l.ForeColor = Color.Red;
-                    l.Font = new Font("Arial", 12, FontStyle.Bold);
-                    panel3.Controls.Add(l);
-                }
-                if (tm == 1)
-                {
-                    Label l = makeLabel(450, 10 + y, 140, "✓", "LavenderBlush", true);
-                    l.ForeColor = Color.Green;
-                    l.Font = new Font("Arial", 18, FontStyle.Bold);
-                    panel3.Controls.Add(l);
-                }
-                else
-                {
-                    Label l = makeLabel(450, 10 + y, 140, "X", "LavenderBlush", true);
-                    l.ForeColor = Color.Red;
-                    l.Font = new Font("Arial", 12, FontStyle.Bold);
-                    panel3.Controls.Add(l);
-                }
+                panel3.Controls.Add(makeLabel(80, 10 + y, 80, avail.ToString(), "LavenderBlush", false));
+                panel3.Controls.Add(makeLabel(160, 10 + y, 80, sumA.ToString(), "LavenderBlush", false));
+                panel3.Controls.Add(makeLabel(240, 10 + y, 80, sumC.ToString(), "LavenderBlush", false));
+                panel3.Controls.Add(makeLabel(320, 10 + y, 120, toBeChecked.ToString(), "LavenderBlush", false));
+                panel3.Controls.Add(makeLabel(440, 10 + y, 90, sumM.ToString(), "LavenderBlush", false));
+                panel3.Controls.Add(makeLabel(530, 10 + y, 140, toBeModerated.ToString(), "LavenderBlush", false));
             }
         }
 
@@ -225,6 +202,17 @@ namespace Assessment
                 n = (int)reader["total"];
             }
             totalToCheck.Text = n.ToString();
+            /*sql = "SELECT * FROM allocation WHERE sid = " + (int)reader["id"] + ";";
+            command = new SQLiteCommand(sql, m_dbConnection);
+            SQLiteDataReader reader2 = command.ExecuteReader();
+            int sumC = 0;
+            while (reader2.Read())
+            {
+                sumC = sumC + (int)reader2["checked"];
+            }
+            if (n > sumC)
+                button3.Enabled = false;
+            */
         }
 
         private void button1_Click(object sender, EventArgs e)

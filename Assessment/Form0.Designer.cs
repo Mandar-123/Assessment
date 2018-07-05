@@ -80,7 +80,7 @@
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.Black;
-            this.panel1.Location = new System.Drawing.Point(674, 100);
+            this.panel1.Location = new System.Drawing.Point(575, 99);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(2, 518);
             this.panel1.TabIndex = 3;
@@ -107,7 +107,7 @@
             this.panel2.Controls.Add(this.semSelect);
             this.panel2.Controls.Add(this.subSelect);
             this.panel2.Controls.Add(this.button1);
-            this.panel2.Location = new System.Drawing.Point(154, 204);
+            this.panel2.Location = new System.Drawing.Point(98, 204);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(437, 266);
             this.panel2.TabIndex = 5;
@@ -145,9 +145,9 @@
             // panel3
             // 
             this.panel3.BackColor = System.Drawing.Color.LavenderBlush;
-            this.panel3.Location = new System.Drawing.Point(717, 204);
+            this.panel3.Location = new System.Drawing.Point(613, 204);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(597, 266);
+            this.panel3.Size = new System.Drawing.Size(686, 266);
             this.panel3.TabIndex = 6;
             // 
             // button2

@@ -45,9 +45,9 @@
             this.label1 = new System.Windows.Forms.Label();
             this.new_alloc = new System.Windows.Forms.TextBox();
             this.new_chkd = new System.Windows.Forms.TextBox();
-            this.new_ass = new System.Windows.Forms.TextBox();
             this.save_but = new System.Windows.Forms.Button();
             this.rem = new System.Windows.Forms.Label();
+            this.new_ass = new System.Windows.Forms.ComboBox();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.newPanel.SuspendLayout();
@@ -131,6 +131,7 @@
             // 
             // newPanel
             // 
+            this.newPanel.Controls.Add(this.new_ass);
             this.newPanel.Controls.Add(this.sumT);
             this.newPanel.Controls.Add(this.backBut);
             this.newPanel.Controls.Add(this.sumC);
@@ -140,7 +141,6 @@
             this.newPanel.Controls.Add(this.label1);
             this.newPanel.Controls.Add(this.new_alloc);
             this.newPanel.Controls.Add(this.new_chkd);
-            this.newPanel.Controls.Add(this.new_ass);
             this.newPanel.Controls.Add(this.save_but);
             this.newPanel.Location = new System.Drawing.Point(0, 329);
             this.newPanel.Margin = new System.Windows.Forms.Padding(0);
@@ -235,15 +235,6 @@
             this.new_chkd.TabIndex = 3;
             this.new_chkd.TextChanged += new System.EventHandler(this.new_chkd_TextChanged);
             // 
-            // new_ass
-            // 
-            this.new_ass.Font = new System.Drawing.Font("Arial", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.new_ass.Location = new System.Drawing.Point(150, 0);
-            this.new_ass.Margin = new System.Windows.Forms.Padding(0);
-            this.new_ass.Name = "new_ass";
-            this.new_ass.Size = new System.Drawing.Size(250, 24);
-            this.new_ass.TabIndex = 1;
-            // 
             // save_but
             // 
             this.save_but.BackColor = System.Drawing.Color.LightSkyBlue;
@@ -262,6 +253,16 @@
             this.rem.Name = "rem";
             this.rem.Size = new System.Drawing.Size(163, 23);
             this.rem.TabIndex = 2;
+            // 
+            // new_ass
+            // 
+            this.new_ass.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.new_ass.Font = new System.Drawing.Font("Arial", 11F);
+            this.new_ass.FormattingEnabled = true;
+            this.new_ass.Location = new System.Drawing.Point(150, 0);
+            this.new_ass.Name = "new_ass";
+            this.new_ass.Size = new System.Drawing.Size(250, 25);
+            this.new_ass.TabIndex = 11;
             // 
             // Form1
             // 
@@ -289,7 +290,6 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button save_but;
         private System.Windows.Forms.Panel newPanel;
-        private System.Windows.Forms.TextBox new_ass;
         private System.Windows.Forms.TextBox new_chkd;
         private System.Windows.Forms.TextBox new_alloc;
         private System.Windows.Forms.Label label1;
@@ -306,6 +306,7 @@
         private System.Windows.Forms.Label sumAL;
         private System.Windows.Forms.Label sumML;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.ComboBox new_ass;
     }
 }
 
