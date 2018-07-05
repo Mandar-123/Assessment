@@ -193,16 +193,19 @@ namespace Assessment
             SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + mDbPath + ";Version=3;");
             m_dbConnection.Open();
 
-            string sql = "SELECT total FROM subject WHERE name = '" + sub + "';";
+            string sql = "SELECT total, id FROM subject WHERE name = '" + sub + "';";
             SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
             SQLiteDataReader reader = command.ExecuteReader();
             int n = 0;
+            int currsubid = -1;
             while (reader.Read())
             {
                 n = (int)reader["total"];
+                currsubid = (int)reader["id"];
             }
             totalToCheck.Text = n.ToString();
-            /*sql = "SELECT * FROM allocation WHERE sid = " + (int)reader["id"] + ";";
+            
+            sql = "SELECT * FROM allocation WHERE sid = " + currsubid + ";";
             command = new SQLiteCommand(sql, m_dbConnection);
             SQLiteDataReader reader2 = command.ExecuteReader();
             int sumC = 0;
@@ -212,7 +215,6 @@ namespace Assessment
             }
             if (n > sumC)
                 button3.Enabled = false;
-            */
         }
 
         private void button1_Click(object sender, EventArgs e)

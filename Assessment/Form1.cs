@@ -295,7 +295,7 @@ namespace Assessment
                 }
                 else
                     alloc = Int32.Parse(txtBox.Text);
-                if (mod == "--- SELECT FACULTY ---")
+                if (mod == "--------- SELECT FACULTY --------")
                     mod = "";
                 sql = "SELECT todayModerated, checked FROM allocation WHERE sid = " + sid + " AND id = " + i + ";";
                 command = new SQLiteCommand(sql, m_dbConnection);
@@ -382,8 +382,7 @@ namespace Assessment
                 alloc = 0;
             else
                 alloc = Int32.Parse(txtBox.Text);
-
-            if (ass == "--- SELECT FACULTY ---")
+            if (ass == "--------- SELECT FACULTY --------")
             {
                 MessageBox.Show("Please Enter Assessor's Name!", "Alert!");
                 comBox = newPanel.Controls["new_ass"] as ComboBox;
