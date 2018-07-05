@@ -272,11 +272,14 @@ namespace Assessment
             sql = "UPDATE subject SET todayDone = 0, todayModDone = 0;";
             command = new SQLiteCommand(sql, m_dbConnection);
             command.ExecuteNonQuery();
-            sql = "UPDATE repdate SET time = '" + DateTime.Now + "'";
+            string str = DateTime.Now.ToString();
+            sql = "UPDATE repdate SET time = '" + str + "'";
             command = new SQLiteCommand(sql, m_dbConnection);
             command.ExecuteNonQuery();
             m_dbConnection.Close();
+            repDate.Text = "Last Report Generated on: " + str;
             MessageBox.Show("Today's Report Generated !", "Message");
+
         }
         public bool WriteExcel(string filename, string database)
         {
@@ -361,7 +364,6 @@ namespace Assessment
                         {
                             ws.Cells[row, 2].AutoFitColumns();
                             max2 = t;
-                            MessageBox.Show(t.ToString());
                         }
                         t = ((string)reader2[1]).Length;
                         ws.Cells[row, 3].Value = reader2[1];

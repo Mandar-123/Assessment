@@ -56,17 +56,22 @@ namespace Assessment
             }
             else
             {
-                panel1.Controls.Add(makeLabel(txtBoxStartPosition, txtBoxStartPositionV, 250, "Assessor"));
-                panel1.Controls.Add(makeLabel(txtBoxStartPosition + 250 + d, txtBoxStartPositionV, 250, "Moderator"));
+                panel1.Controls.Add(makeLabel(txtBoxStartPosition + 100, txtBoxStartPositionV, 250, "Assessor"));
             }
             if(cORm == "Checking")
-                panel1.Controls.Add(makeLabel(txtBoxStartPosition + 465 + 2 * d, txtBoxStartPositionV, 100, "Total Checked"));
+                panel1.Controls.Add(makeLabel(txtBoxStartPosition + 465 + 2 * d - 100, txtBoxStartPositionV, 100, "Total Checked"));
             else
                 panel1.Controls.Add(makeLabel(txtBoxStartPosition + 465 + 2 * d, txtBoxStartPositionV, 120, "Total Moderated"));
-            panel1.Controls.Add(makeLabel(txtBoxStartPosition + 575 + 3 * d, txtBoxStartPositionV, 10, "/"));
-            panel1.Controls.Add(makeLabel(txtBoxStartPosition + 575 + 4 * d, txtBoxStartPositionV, 75, "Allocated"));
-            if(cORm == "Checking")
-                panel1.Controls.Add(makeLabel(txtBoxStartPosition + 650 + 5 * d, txtBoxStartPositionV, 120, "Checked Today"));
+            if (cORm == "Checking")
+                panel1.Controls.Add(makeLabel(txtBoxStartPosition + 575 + 3 * d - 100, txtBoxStartPositionV, 10, "/"));
+            else
+                panel1.Controls.Add(makeLabel(txtBoxStartPosition + 575 + 3 * d, txtBoxStartPositionV, 10, "/"));
+            if (cORm == "Checking")
+                panel1.Controls.Add(makeLabel(txtBoxStartPosition + 575 + 4 * d - 100, txtBoxStartPositionV, 75, "Allocated"));
+            else
+                panel1.Controls.Add(makeLabel(txtBoxStartPosition + 575 + 4 * d, txtBoxStartPositionV, 75, "Allocated"));
+            if (cORm == "Checking")
+                panel1.Controls.Add(makeLabel(txtBoxStartPosition + 650 + 5 * d - 100, txtBoxStartPositionV, 120, "Checked Today"));
             else
                 panel1.Controls.Add(makeLabel(txtBoxStartPosition + 650 + 5 * d, txtBoxStartPositionV, 120, "Moderated Today"));
             txtBoxStartPositionV += 30;
@@ -142,8 +147,6 @@ namespace Assessment
                 int alloc, chkd, tchkd;
                 TextBox txtBox = panel1.Controls["ass_" + i.ToString()] as TextBox;
                 ass = txtBox.Text;
-                txtBox = panel1.Controls["mod_" + i.ToString()] as TextBox;
-                mod = txtBox.Text;
                 txtBox = panel1.Controls["chkd_" + i.ToString()] as TextBox;
                 chkd = Int32.Parse(txtBox.Text);
                 txtBox = panel1.Controls["tchkd_" + i.ToString()] as TextBox;
@@ -192,7 +195,7 @@ namespace Assessment
                     return;
                 }
 
-                sql = "UPDATE allocation SET assessor = '" + ass + "', moderator = '" + mod + "', allocated = " + alloc + ", checked = " + chkd + ", todayChecked = " + tchkd + " WHERE sid =" + sid + " AND id = " + i + ";";
+                sql = "UPDATE allocation SET assessor = '" + ass + "',  allocated = " + alloc + ", checked = " + chkd + ", todayChecked = " + tchkd + " WHERE sid =" + sid + " AND id = " + i + ";";
                 command = new SQLiteCommand(sql, m_dbConnection);
 
                 try
@@ -335,6 +338,14 @@ namespace Assessment
             sumTML.Text = sumTodayModerated.ToString();
         }
 
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Form0 fr = new Form0(acedemicYear, sem, exam, branch);
+            this.Hide();
+            fr.ShowDialog();
+            this.Close();
+        }
+
         private void addNew_Click(object sender, EventArgs e)
         {
             SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + mDbPath + ";Version=3;");
@@ -344,8 +355,6 @@ namespace Assessment
             int alloc, chkd, tchkd;
             TextBox txtBox = newPanel.Controls["new_ass"] as TextBox;
             ass = txtBox.Text;
-            txtBox = newPanel.Controls["new_mod"] as TextBox;
-            mod = txtBox.Text;
             txtBox = newPanel.Controls["new_chkd"] as TextBox;
             if (txtBox.Text == "")
                 chkd = 0;
@@ -406,7 +415,7 @@ namespace Assessment
                 txtBox.Focus();
                 return;
             }
-            string sql = "INSERT into allocation (sid, id, assessor, moderator, allocated, checked, todayChecked, moderated, todayModerated) values (" + sid + ", " + total_entries + ", '" + ass + "', '" + mod + "', " + alloc + ", " + chkd + ", " + tchkd + ", 0, 0);";
+            string sql = "INSERT into allocation (sid, id, assessor, moderator, allocated, checked, todayChecked, moderated, todayModerated) values (" + sid + ", " + total_entries + ", '" + ass + "', '', " + alloc + ", " + chkd + ", " + tchkd + ", 0, 0);";
             SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
             try
             {
@@ -423,7 +432,6 @@ namespace Assessment
 
             }
             new_ass.Text = "";
-            new_mod.Text = "";
             new_chkd.Text = "";
             new_tchkd.Text = "";
             new_alloc.Text = "";
@@ -453,8 +461,7 @@ namespace Assessment
                 int t_tmode = (int)reader["todayModerated"];
                 if (cORm == "Checking")
                 {
-                    panel1.Controls.Add(makeBox(txtBoxStartPosition, txtBoxStartPositionV, 250, t_ass, "ass_" + t_id.ToString(), true, false));
-                    panel1.Controls.Add(makeBox(txtBoxStartPosition + 250 + d, txtBoxStartPositionV, 250, t_mod, "mod_" + t_id.ToString(), true, false));
+                    panel1.Controls.Add(makeBox(txtBoxStartPosition + 100, txtBoxStartPositionV, 250, t_ass, "ass_" + t_id.ToString(), true, false));
                 }
                 else
                 {
@@ -462,16 +469,18 @@ namespace Assessment
                     panel1.Controls.Add(makeBox(txtBoxStartPosition + 250 + d, txtBoxStartPositionV, 250, t_ass + " (" + t_chkd + ")", "ass_" + t_id.ToString(), false, false));
                 }
                 if (cORm == "Checking")
-                    panel1.Controls.Add(makeBox(txtBoxStartPosition + 500 + 2 * d, txtBoxStartPositionV, 50, t_chkd.ToString(), "chkd_" + t_id.ToString(), false, true));
+                    panel1.Controls.Add(makeBox(txtBoxStartPosition - 100 + 500 + 2 * d, txtBoxStartPositionV, 50, t_chkd.ToString(), "chkd_" + t_id.ToString(), false, true));
                 else
                     panel1.Controls.Add(makeBox(txtBoxStartPosition + 500 + 2 * d, txtBoxStartPositionV, 50, t_mode.ToString(), "mode_" + t_id.ToString(), false, true));
-                panel1.Controls.Add(makeLabel(txtBoxStartPosition + 575 + 3 * d, txtBoxStartPositionV, 10, "/"));
-                if(cORm == "Checking")
-                    panel1.Controls.Add(makeBox(txtBoxStartPosition + 585 + 4 * d, txtBoxStartPositionV, 50, t_all.ToString(), "alloc_" + t_id.ToString(), true, true));
+                if (cORm == "Checking")
+                    panel1.Controls.Add(makeLabel(txtBoxStartPosition + 575 + 3 * d - 100, txtBoxStartPositionV, 10, "/"));
+                else panel1.Controls.Add(makeLabel(txtBoxStartPosition + 575 + 3 * d, txtBoxStartPositionV, 10, "/"));
+                if (cORm == "Checking")
+                    panel1.Controls.Add(makeBox(txtBoxStartPosition + 585 + 4 * d - 100, txtBoxStartPositionV, 50, t_all.ToString(), "alloc_" + t_id.ToString(), true, true));
                 else
                     panel1.Controls.Add(makeBox(txtBoxStartPosition + 585 + 4 * d, txtBoxStartPositionV, 50, t_all.ToString(), "alloc_" + t_id.ToString(), false, true));
                 if (cORm == "Checking")
-                    panel1.Controls.Add(makeBox(txtBoxStartPosition + 665 + 5 * d, txtBoxStartPositionV, 50, t_tchkd.ToString(), "tchkd_" + t_id.ToString(), true, true));
+                    panel1.Controls.Add(makeBox(txtBoxStartPosition + 665 + 5 * d - 100, txtBoxStartPositionV, 50, t_tchkd.ToString(), "tchkd_" + t_id.ToString(), true, true));
                 else
                     panel1.Controls.Add(makeBox(txtBoxStartPosition + 665 + 5 * d, txtBoxStartPositionV, 50, t_tmode.ToString(), "tmode_" + t_id.ToString(), true, true));
                 txtBoxStartPositionV += 30;

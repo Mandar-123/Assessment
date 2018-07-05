@@ -41,3 +41,6 @@ F:\GitHub_Repos\Assessment\Assessment\obj\Debug\Assessment.pdb
 F:\GitHub_Repos\Assessment\Assessment\bin\Debug\EPPlus.dll
 F:\GitHub_Repos\Assessment\Assessment\bin\Debug\EPPlus.xml
 F:\GitHub_Repos\Assessment\Assessment\obj\Debug\Assessment.Form2.resources
+F:\Projects\VisualStudioProjects\Assessment\Assessment\bin\Debug\EPPlus.dll
+F:\Projects\VisualStudioProjects\Assessment\Assessment\bin\Debug\EPPlus.xml
+F:\Projects\VisualStudioProjects\Assessment\Assessment\obj\Debug\Assessment.Form2.resources
