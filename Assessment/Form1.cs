@@ -25,6 +25,7 @@ namespace Assessment
         string sem;
         string mDbPath;
         string acedemicYear, exam, branch, cORm;
+        bool firstTime;
         public Form1(int sid, string name, string sem, string dbPath, string ay, string ex, string br, int ttc, string cm)
         {
             InitializeComponent();
@@ -41,13 +42,17 @@ namespace Assessment
             this.branch = br;
             this.total = ttc;
             this.cORm = cm;
+            this.firstTime = true;
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             this.WindowState = FormWindowState.Maximized;
             string[] facultyArray = File.ReadAllLines(Application.StartupPath + "\\Faculty.txt", Encoding.UTF8);
-            for(int iter = 0; iter < facultyArray.Length; iter++)
+
+            new_ass.Items.Add("---------SELECT FACULTY--------");
+            
+            for (int iter = 0; iter < facultyArray.Length; iter++)
             {
                 new_ass.Items.Add(facultyArray[iter]);
             }
@@ -226,6 +231,10 @@ namespace Assessment
             sumT.Text = sumTodayChecked.ToString();
             rem.Text = "To be allocated: " + (total - sumAllocated).ToString();
             rem.Font = new Font("Arial", 11, FontStyle.Bold);
+            if (!firstTime)
+                MessageBox.Show("Saved!", "Alert!");
+            else
+                firstTime = false;
         }
 
         private void new_chkd_TextChanged(object sender, EventArgs e)
@@ -348,6 +357,11 @@ namespace Assessment
             sumML.Text = sumModerated.ToString();
             sumAL.Text = sumAllocated.ToString();
             sumTML.Text = sumTodayModerated.ToString();
+
+            if (!firstTime)
+                MessageBox.Show("Saved!", "Alert!");
+            else
+                firstTime = false;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -483,6 +497,7 @@ namespace Assessment
                     newCom.Size = new System.Drawing.Size(250, 30);
                     newCom.Font = new Font("Arial", 11);
                     string[] facultyArray = File.ReadAllLines(Application.StartupPath + "\\Faculty.txt", Encoding.UTF8);
+                    newCom.Items.Add("---------SELECT FACULTY--------");
                     for (int iter = 0; iter < facultyArray.Length; iter++)
                     {
                         newCom.Items.Add(facultyArray[iter]);
@@ -500,7 +515,7 @@ namespace Assessment
                                 break;
                             }
                         }
-                        newCom.SelectedIndex = pos;
+                        newCom.SelectedIndex = pos + 1;
                         newCom.Enabled = false;
                     }
                     panel1.Controls.Add(newCom);

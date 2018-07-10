@@ -184,10 +184,30 @@ namespace Assessment
 
         private void subSelect_SelectedIndexChanged(object sender, EventArgs e)
         {
-            getTotalPapers(subSelect.Text);
+            int[] arr = getTotalPapers(subSelect.Text);
+
+            int n  = arr[0];
+            totalToCheck.Text = n.ToString();
+
+            int sumC = arr[1];
+
+            if (n > sumC || n==0)
+            {
+                button3.Enabled = false;
+                button1.Enabled = true;
+                totalToCheck.Enabled = true;
+            }
+
+            else
+            {
+                button3.Enabled = true;
+                button1.Enabled = false;
+                totalToCheck.Enabled = false;
+            }
+                
         }
 
-        public void getTotalPapers(string sub)
+        public int[] getTotalPapers(string sub)
         {
             string subject = subSelect.Text;
             SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + mDbPath + ";Version=3;");
@@ -203,18 +223,18 @@ namespace Assessment
                 n = (int)reader["total"];
                 currsubid = (int)reader["id"];
             }
-            totalToCheck.Text = n.ToString();
-            
+
             sql = "SELECT * FROM allocation WHERE sid = " + currsubid + ";";
             command = new SQLiteCommand(sql, m_dbConnection);
             SQLiteDataReader reader2 = command.ExecuteReader();
-            int sumC = 0;
+            int sumC = 0, sumA = 0 ;
             while (reader2.Read())
             {
                 sumC = sumC + (int)reader2["checked"];
+                sumA = sumA + (int)reader2["allocated"];
             }
-            if (n > sumC)
-                button3.Enabled = false;
+            int[] arr = { n, sumC, sumA, currsubid}; 
+            return arr;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -239,12 +259,26 @@ namespace Assessment
             }
             string sem = semSelect.Text;
             int ttc = Int32.Parse(totalToCheck.Text);
+            if (!validateInp(ttc))
+            {
+                MessageBox.Show("Number of papers allocated exceed!", "Alert!");
+                return;
+            }
             Form1 fr = new Form1(n, subject, sem, mDbPath, acedemicYear, exam, branch, ttc, "Checking");
             this.Hide();
             fr.ShowDialog();
             this.Close();
         }
 
+        public bool validateInp(int ttc)
+        {
+            int[] arr = getTotalPapers(subSelect.Text);
+            int sumA = arr[2];
+            if (ttc >= sumA)
+                return true;
+            else
+                return false;
+        } 
         private void printReport_Click(object sender, EventArgs e)
         {
             string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
@@ -528,6 +562,11 @@ namespace Assessment
             }
             string sem = semSelect.Text;
             int ttc = Int32.Parse(totalToCheck.Text);
+            if (!validateInp(ttc))
+            {
+                MessageBox.Show("Number of papers allocated exceed!", "Alert!");
+                return;
+            }
             Form1 fr = new Form1(n, subject, sem, mDbPath, acedemicYear, exam, branch, ttc, "Moderation");
             this.Hide();
             fr.ShowDialog();
