@@ -48,13 +48,14 @@ namespace Assessment
         private void Form1_Load(object sender, EventArgs e)
         {
             this.WindowState = FormWindowState.Maximized;
-            string[] facultyArray = File.ReadAllLines(Application.StartupPath + "\\Faculty.txt", Encoding.UTF8);
-
-            new_ass.Items.Add("---------SELECT FACULTY--------");
+            string[] facultyArray = File.ReadAllLines(Application.StartupPath + "\\Assessors.txt", Encoding.UTF8);
+            Array.Sort(facultyArray);
+            new_ass.Items.Add("--------- SELECT FACULTY --------");
             
             for (int iter = 0; iter < facultyArray.Length; iter++)
             {
-                new_ass.Items.Add(facultyArray[iter]);
+                if(facultyArray[iter] != "" )
+                    new_ass.Items.Add(facultyArray[iter]);
             }
             new_ass.SelectedIndex = 0;
             Label ltop = makeLabel(75, 40, 400, name + " (" + sem + " - " + branch + ")");
@@ -231,10 +232,11 @@ namespace Assessment
             sumT.Text = sumTodayChecked.ToString();
             rem.Text = "To be allocated: " + (total - sumAllocated).ToString();
             rem.Font = new Font("Arial", 11, FontStyle.Bold);
-            if (!firstTime)
+            /*if (!firstTime)
                 MessageBox.Show("Saved!", "Alert!");
             else
                 firstTime = false;
+            */
         }
 
         private void new_chkd_TextChanged(object sender, EventArgs e)
@@ -473,7 +475,15 @@ namespace Assessment
             string sql = "SELECT * FROM allocation where sid = " + sid + " AND id >= " + total_entries + " ORDER BY id";
             SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
             SQLiteDataReader reader = command.ExecuteReader();
-            
+
+            string[] facultyArray = new string[1000];
+            string[] temp = File.ReadAllLines(Application.StartupPath + "\\Moderators.txt", Encoding.UTF8);
+            for (int it = 0; it < temp.Length; it++)
+            {
+                facultyArray[it] = temp[it];
+            }
+            Array.Sort(facultyArray);
+
             while (reader.Read())
             {
                 int t_id = (int)reader["id"];
@@ -496,28 +506,25 @@ namespace Assessment
                     newCom.Location = new System.Drawing.Point(txtBoxStartPosition, txtBoxStartPositionV);
                     newCom.Size = new System.Drawing.Size(250, 30);
                     newCom.Font = new Font("Arial", 11);
-                    string[] facultyArray = File.ReadAllLines(Application.StartupPath + "\\Faculty.txt", Encoding.UTF8);
-                    newCom.Items.Add("---------SELECT FACULTY--------");
-                    for (int iter = 0; iter < facultyArray.Length; iter++)
-                    {
-                        newCom.Items.Add(facultyArray[iter]);
-                    }
+                    
+                    
                     if(t_mod == "")
-                        newCom.SelectedIndex = 0;
-                    else
                     {
-                        int pos = -1;
+                        newCom.Items.Add("--------- SELECT FACULTY --------");
                         for (int iter = 0; iter < facultyArray.Length; iter++)
                         {
-                            if(facultyArray[iter] == t_mod)
-                            {
-                                pos = iter;
-                                break;
-                            }
+                            if (facultyArray[iter] != "" && facultyArray[iter] != null)
+                                newCom.Items.Add(facultyArray[iter]);
                         }
-                        newCom.SelectedIndex = pos + 1;
+                        newCom.SelectedIndex = 0;
+                    }
+                    else
+                    {
+                        newCom.Items.Add(t_mod);
+                        newCom.SelectedIndex = 0;
                         newCom.Enabled = false;
                     }
+
                     panel1.Controls.Add(newCom);
                     panel1.Controls.Add(makeBox(txtBoxStartPosition + 250 + d, txtBoxStartPositionV, 250, t_ass + "(" + t_chkd + ")", "ass_" + t_id.ToString(), false, false));
                 }
