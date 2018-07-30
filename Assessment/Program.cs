@@ -40,6 +40,19 @@ namespace Assessment
                 fillEXTC();
                 fillIT();
             }
+
+            if (!File.Exists(Application.StartupPath + "\\Assessors.txt"))
+            {
+                FileStream f = File.Create(Application.StartupPath + "\\Assessors.txt");
+                f.Close();
+            }
+
+            if (!File.Exists(Application.StartupPath + "\\Moderators.txt"))
+            {
+                FileStream f = File.Create(Application.StartupPath + "\\Moderators.txt");
+                f.Close();
+            }
+
             Application.Run(new Form2("2018 - 2019", "Sem 3", "Dec 18", "CMPN"));
         }
 

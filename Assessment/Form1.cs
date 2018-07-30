@@ -48,6 +48,7 @@ namespace Assessment
         private void Form1_Load(object sender, EventArgs e)
         {
             this.WindowState = FormWindowState.Maximized;
+
             string[] facultyArray = File.ReadAllLines(Application.StartupPath + "\\Assessors.txt", Encoding.UTF8);
             Array.Sort(facultyArray);
             new_ass.Items.Add("--------- SELECT FACULTY --------");
