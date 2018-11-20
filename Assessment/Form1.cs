@@ -49,6 +49,13 @@ namespace Assessment
         {
             this.WindowState = FormWindowState.Maximized;
 
+            if (cORm == "Checking") {
+                addFac.Text = "Add Assessors";
+            }
+            else {
+                addFac.Text = "Add Moderators";
+            }
+
             string[] facultyArray = File.ReadAllLines(Application.StartupPath + "\\Assessors.txt", Encoding.UTF8);
             Array.Sort(facultyArray);
             new_ass.Items.Add("--------- SELECT FACULTY --------");
@@ -88,6 +95,7 @@ namespace Assessment
             else
                 panel1.Controls.Add(makeLabel(txtBoxStartPosition + 650 + 5 * d, txtBoxStartPositionV, 120, "Moderated Today"));
             txtBoxStartPositionV += 30;
+
             SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + mDbPath + ";Version=3;");
             m_dbConnection.Open();
             string sql = "UPDATE subject SET total = " + total + " where id = " + sid + ";";
@@ -370,6 +378,14 @@ namespace Assessment
         private void button1_Click(object sender, EventArgs e)
         {
             Form0 fr = new Form0(acedemicYear, sem, exam, branch);
+            this.Hide();
+            fr.ShowDialog();
+            this.Close();
+        }
+
+        private void addFac_Click(object sender, EventArgs e)
+        {
+            Form3 fr = new Form3(sid, name, sem, mDbPath, acedemicYear, exam, branch, cORm);
             this.Hide();
             fr.ShowDialog();
             this.Close();

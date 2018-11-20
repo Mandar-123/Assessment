@@ -36,6 +36,7 @@
             this.sumML = new System.Windows.Forms.Label();
             this.saveMod = new System.Windows.Forms.Button();
             this.newPanel = new System.Windows.Forms.Panel();
+            this.new_ass = new System.Windows.Forms.ComboBox();
             this.sumT = new System.Windows.Forms.Label();
             this.backBut = new System.Windows.Forms.Button();
             this.sumC = new System.Windows.Forms.Label();
@@ -47,7 +48,7 @@
             this.new_chkd = new System.Windows.Forms.TextBox();
             this.save_but = new System.Windows.Forms.Button();
             this.rem = new System.Windows.Forms.Label();
-            this.new_ass = new System.Windows.Forms.ComboBox();
+            this.addFac = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.newPanel.SuspendLayout();
@@ -147,6 +148,16 @@
             this.newPanel.Name = "newPanel";
             this.newPanel.Size = new System.Drawing.Size(1084, 118);
             this.newPanel.TabIndex = 1;
+            // 
+            // new_ass
+            // 
+            this.new_ass.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.new_ass.Font = new System.Drawing.Font("Arial", 11F);
+            this.new_ass.FormattingEnabled = true;
+            this.new_ass.Location = new System.Drawing.Point(150, 0);
+            this.new_ass.Name = "new_ass";
+            this.new_ass.Size = new System.Drawing.Size(250, 25);
+            this.new_ass.TabIndex = 11;
             // 
             // sumT
             // 
@@ -254,15 +265,14 @@
             this.rem.Size = new System.Drawing.Size(163, 23);
             this.rem.TabIndex = 2;
             // 
-            // new_ass
+            // addFac
             // 
-            this.new_ass.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.new_ass.Font = new System.Drawing.Font("Arial", 11F);
-            this.new_ass.FormattingEnabled = true;
-            this.new_ass.Location = new System.Drawing.Point(150, 0);
-            this.new_ass.Name = "new_ass";
-            this.new_ass.Size = new System.Drawing.Size(250, 25);
-            this.new_ass.TabIndex = 11;
+            this.addFac.Location = new System.Drawing.Point(991, 29);
+            this.addFac.Name = "addFac";
+            this.addFac.Size = new System.Drawing.Size(127, 34);
+            this.addFac.TabIndex = 3;
+            this.addFac.UseVisualStyleBackColor = true;
+            this.addFac.Click += new System.EventHandler(this.addFac_Click);
             // 
             // Form1
             // 
@@ -270,6 +280,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(1350, 729);
+            this.Controls.Add(this.addFac);
             this.Controls.Add(this.rem);
             this.Controls.Add(this.panel1);
             this.Name = "Form1";
@@ -307,6 +318,7 @@
         private System.Windows.Forms.Label sumML;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.ComboBox new_ass;
+        private System.Windows.Forms.Button addFac;
     }
 }
 
