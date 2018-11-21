@@ -103,7 +103,7 @@ namespace Assessment
             if (cORm == "Moderation")
             {
                 panel1.Controls.Add(makeLabel(txtBoxStartPosition, txtBoxStartPositionV, 250, "Moderator"));
-                panel1.Controls.Add(makeLabel(txtBoxStartPosition + 250 + d, txtBoxStartPositionV, 250, "Assessor (Checked)"));
+                panel1.Controls.Add(makeLabel(txtBoxStartPosition + 250 + d, txtBoxStartPositionV, 250, "Assessor"));
             }
             else
             {
@@ -177,6 +177,23 @@ namespace Assessment
             return newLabel;
         }
 
+        private int getIdByName(int sid, string name, string cORm)
+        {
+            SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + mDbPath + ";Version=3;");
+            m_dbConnection.Open();
+
+            int retId = -1;
+            string sql = "SELECT id FROM faculty where sid = " + sid + " AND name == '" + name + "' AND cORm == '" + cORm + "'";
+            SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
+            SQLiteDataReader reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                retId = (int)reader["id"];
+            }
+            return retId;
+        }
+
         private void save_but_Click(object sender, EventArgs e)
         {
             int sumChecked = 0, sumAllocated = 0, sumTodayChecked = 0;
@@ -193,10 +210,11 @@ namespace Assessment
 
             for (int i = 1; i < total_entries; i++)
             {
-                string ass;
+                int ass;
                 int alloc, chkd, tchkd;
                 TextBox txtBox = panel1.Controls["ass_" + i.ToString()] as TextBox;
-                ass = txtBox.Text;
+                string tassname = txtBox.Text;
+                ass = getIdByName(sid, tassname, cORm);
                 txtBox = panel1.Controls["chkd_" + i.ToString()] as TextBox;
                 chkd = Int32.Parse(txtBox.Text);
                 txtBox = panel1.Controls["tchkd_" + i.ToString()] as TextBox;
@@ -245,7 +263,7 @@ namespace Assessment
                     return;
                 }
 
-                sql = "UPDATE allocation SET assessor = '" + ass + "',  allocated = " + alloc + ", checked = " + chkd + ", todayChecked = " + tchkd + " WHERE sid =" + sid + " AND id = " + i + ";";
+                sql = "UPDATE allocation SET assessor = " + ass + ",  allocated = " + alloc + ", checked = " + chkd + ", todayChecked = " + tchkd + " WHERE sid =" + sid + " AND id = " + i + ";";
                 command = new SQLiteCommand(sql, m_dbConnection);
 
                 try
@@ -255,7 +273,7 @@ namespace Assessment
                 catch (System.Exception ex)
                 {
                     if (ex.Message.Contains("UNIQUE"))
-                        MessageBox.Show("Faculty named '"+ ass + "' Already Exists!", "Alert!");
+                        MessageBox.Show("Faculty named '"+ tassname + "' Already Exists!", "Alert!");
                     m_dbConnection.Close();
                     txtBox = panel1.Controls["ass_" + i.ToString()] as TextBox;
                     txtBox.Focus();
@@ -323,12 +341,14 @@ namespace Assessment
 
             for (int i = 1; i < total_entries; i++)
             {
-                string ass, mod;
+                string ass;
+                int mod;
                 int alloc, mode, tmode;
                 TextBox txtBox = panel1.Controls["ass_" + i.ToString()] as TextBox;
                 ass = txtBox.Text;
                 ComboBox cb = panel1.Controls["mod_" + i.ToString()] as ComboBox;
-                mod = cb.Text;
+                string tmodname = cb.Text;
+                mod = getIdByName(sid,tmodname, "Moderation");
                 txtBox = panel1.Controls["mode_" + i.ToString()] as TextBox;
                 mode = Int32.Parse(txtBox.Text);
                 txtBox = panel1.Controls["tmode_" + i.ToString()] as TextBox;
@@ -347,8 +367,8 @@ namespace Assessment
                 }
                 else
                     alloc = Int32.Parse(txtBox.Text);
-                if (mod == "--------- SELECT FACULTY --------")
-                    mod = "";
+                if (tmodname == "--------- SELECT FACULTY --------")
+                    mod = -1;
                 sql = "SELECT todayModerated, checked FROM allocation WHERE sid = " + sid + " AND id = " + i + ";";
                 command = new SQLiteCommand(sql, m_dbConnection);
                 SQLiteDataReader reader = command.ExecuteReader();
@@ -364,7 +384,7 @@ namespace Assessment
                 sumModerated += mode;
                 sumAllocated += alloc;
 
-                if (mod == "" && mode != 0)
+                if (mod == -1 && mode != 0)
                 {
                     MessageBox.Show("Please Enter the name of Moderator!");
                     return;
@@ -384,13 +404,13 @@ namespace Assessment
                     return;
                 }
 
-                if (mod == ass.Split('(')[0])
+                if (tmodname == ass)
                 {
                     MessageBox.Show("NOT SAVED! Moderator and Assessor are both Same!", "Alert!");
                     cb.Focus();
                     return;
                 }
-                sql = "UPDATE allocation SET moderator = '" + mod + "', allocated = " + alloc + ", moderated = " + mode + ", todayModerated = " + tmode + " WHERE sid =" + sid + " AND id = " + i + ";";
+                sql = "UPDATE allocation SET moderator = " + mod + ", allocated = " + alloc + ", moderated = " + mode + ", todayModerated = " + tmode + " WHERE sid =" + sid + " AND id = " + i + ";";
                 command = new SQLiteCommand(sql, m_dbConnection);
                 command.ExecuteNonQuery();
                 txtBox = panel1.Controls["mode_" + i.ToString()] as TextBox;
@@ -432,10 +452,11 @@ namespace Assessment
             SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + mDbPath + ";Version=3;");
             m_dbConnection.Open();
 
-            string ass;
+            int ass;
             int alloc, chkd, tchkd;
             ComboBox comBox = newPanel.Controls["new_ass"] as ComboBox;
-            ass = comBox.Text;
+            string tassname = comBox.Text;
+            ass = getIdByName(sid, tassname, "Checking");
             TextBox txtBox = newPanel.Controls["new_chkd"] as TextBox;
             if (txtBox.Text == "")
                 chkd = 0;
@@ -451,7 +472,7 @@ namespace Assessment
                 alloc = 0;
             else
                 alloc = Int32.Parse(txtBox.Text);
-            if (ass == "--------- SELECT FACULTY --------")
+            if (tassname == "--------- SELECT FACULTY --------")
             {
                 MessageBox.Show("Please Enter Assessor's Name!", "Alert!");
                 comBox = newPanel.Controls["new_ass"] as ComboBox;
@@ -495,7 +516,7 @@ namespace Assessment
                 txtBox.Focus();
                 return;
             }
-            string sql = "INSERT into allocation (sid, id, assessor, moderator, allocated, checked, todayChecked, moderated, todayModerated) values (" + sid + ", " + total_entries + ", '" + ass + "', '', " + alloc + ", " + chkd + ", " + tchkd + ", 0, 0);";
+            string sql = "INSERT into allocation (sid, id, assessor, moderator, allocated, checked, todayChecked, moderated, todayModerated) values (" + sid + ", " + total_entries + ", " + ass + ", -1, " + alloc + ", " + chkd + ", " + tchkd + ", 0, 0);";
             SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
             try
             {
@@ -504,7 +525,7 @@ namespace Assessment
             catch(System.Exception ex)
             {
                 if(ex.Message.Contains("UNIQUE"))
-                    MessageBox.Show("Faculty named '" + ass + "' Already Exists!", "Alert!");
+                    MessageBox.Show("Faculty named '" + tassname + "' Already Exists!", "Alert!");
                 comBox = newPanel.Controls["new_ass"] as ComboBox;
                 comBox.Focus();
                 m_dbConnection.Close();
@@ -518,6 +539,23 @@ namespace Assessment
             m_dbConnection.Close();
             load();
             save_but_Click(sender, e);
+        }
+
+        private string getNameById(int sid, int id, string cORm)
+        {
+            SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + mDbPath + ";Version=3;");
+            m_dbConnection.Open();
+
+            string retName = "";
+            string sql = "SELECT name FROM faculty where sid = " + sid + " AND id == " + id + " AND cORm == '" + cORm + "'";
+            SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
+            SQLiteDataReader reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                retName = (string)reader["name"];
+            }
+            return retName;
         }
 
         public void load()
@@ -560,16 +598,19 @@ namespace Assessment
             while (reader.Read())
             {
                 int t_id = (int)reader["id"];
-                string t_ass = (string)reader["assessor"];
-                string t_mod = (string)reader["moderator"];
+                int t_ass = (int)reader["assessor"];
+                int t_mod = (int)reader["moderator"];
                 int t_all = (int)reader["allocated"];
                 int t_chkd = (int)reader["checked"];
                 int t_tchkd = (int)reader["todayChecked"];
                 int t_mode = (int)reader["moderated"];
                 int t_tmode = (int)reader["todayModerated"];
+
+                string t_ass_name = getNameById(sid, t_ass, "Checking");
+                
                 if (cORm == "Checking")
                 {
-                    panel1.Controls.Add(makeBox(txtBoxStartPosition + 100, txtBoxStartPositionV, 250, t_ass, "ass_" + t_id.ToString(), false, false));
+                    panel1.Controls.Add(makeBox(txtBoxStartPosition + 100, txtBoxStartPositionV, 250, t_ass_name, "ass_" + t_id.ToString(), false, false));
                 }
                 else
                 {
@@ -580,8 +621,7 @@ namespace Assessment
                     newCom.Size = new System.Drawing.Size(250, 30);
                     newCom.Font = new Font("Arial", 11);
                     
-                    
-                    if(t_mod == "")
+                    if(t_mod == -1)
                     {
                         newCom.Items.Add("--------- SELECT FACULTY --------");
                         for (int iter = 0; iter < facultyArray.Length; iter++)
@@ -593,13 +633,14 @@ namespace Assessment
                     }
                     else
                     {
-                        newCom.Items.Add(t_mod);
+                        string t_mod_name = getNameById(sid, t_mod, "Moderation");
+                        newCom.Items.Add(t_mod_name);
                         newCom.SelectedIndex = 0;
                         newCom.Enabled = false;
                     }
 
                     panel1.Controls.Add(newCom);
-                    panel1.Controls.Add(makeBox(txtBoxStartPosition + 250 + d, txtBoxStartPositionV, 250, t_ass + "(" + t_chkd + ")", "ass_" + t_id.ToString(), false, false));
+                    panel1.Controls.Add(makeBox(txtBoxStartPosition + 250 + d, txtBoxStartPositionV, 250, t_ass_name, "ass_" + t_id.ToString(), false, false));
                 }
                 if (cORm == "Checking")
                     panel1.Controls.Add(makeBox(txtBoxStartPosition - 100 + 500 + 2 * d, txtBoxStartPositionV, 50, t_chkd.ToString(), "chkd_" + t_id.ToString(), false, true));

@@ -69,7 +69,7 @@ namespace Assessment
             command = new SQLiteCommand(sql, m_dbConnection);
             command.ExecuteNonQuery();
 
-            sql = "CREATE TABLE IF NOT EXISTS allocation (sid int, id int, assessor varchar(50), moderator varchar(50), allocated int, checked int, todayChecked int, moderated int, todayModerated int, PRIMARY KEY(sid, id), UNIQUE(sid, assessor));";
+            sql = "CREATE TABLE IF NOT EXISTS allocation (sid int, id int, assessor int, moderator int, allocated int, checked int, todayChecked int, moderated int, todayModerated int, PRIMARY KEY(sid, id), UNIQUE(sid, assessor));";
             command = new SQLiteCommand(sql, m_dbConnection);
             command.ExecuteNonQuery();
 
@@ -119,6 +119,23 @@ namespace Assessment
                 panel3.Controls.Add(makeLabel(440, 10 + y, 90, sumM.ToString(), "LavenderBlush", false));
                 panel3.Controls.Add(makeLabel(530, 10 + y, 140, toBeModerated.ToString(), "LavenderBlush", false));
             }
+        }
+
+        private string getNameById(int sid, int id, string cORm)
+        {
+            SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + mDbPath + ";Version=3;");
+            m_dbConnection.Open();
+
+            string retName = "";
+            string sql = "SELECT name FROM faculty where sid = " + sid + " AND id == " + id + " AND cORm == '" + cORm + "'";
+            SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
+            SQLiteDataReader reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                retName = (string)reader["name"];
+            }
+            return retName;
         }
 
         public void copySubjects()
@@ -382,20 +399,30 @@ namespace Assessment
                     while (reader2.Read())
                     {
                         ws.Cells[row, 1].Value = c.ToString();
-                        int t = ((string)reader2[0]).Length;
-                        ws.Cells[row, 2].Value = reader2[0];
+                        int tsid = (int)reader[1];
+
+                        int tass = (int)reader2[0];
+                        string tassname = getNameById(tsid, tass, "Checking");
+                        ws.Cells[row, 2].Value = tassname;
+                        int t = tassname.Length;
+
                         if (t > max2)
                         {
                             ws.Cells[row, 2].AutoFitColumns();
                             max2 = t;
                         }
-                        t = ((string)reader2[1]).Length;
-                        ws.Cells[row, 3].Value = reader2[1];
+
+                        int tmod = (int)reader2[1];
+                        string tmodname = getNameById(tsid, tmod, "Moderation");
+                        ws.Cells[row, 3].Value = tmodname;
+                        t = tmodname.Length;
+
                         if (t > max3)
                         {
                             ws.Cells[row, 3].AutoFitColumns();
                             max3 = t;
                         }
+
                         ws.Cells[row, 4].Value = reader2[2];
                         sumA = sumA + (int)reader2[2];
                         ws.Cells[row, 5].Value = reader2[3];

@@ -73,7 +73,6 @@ namespace Assessment
 
             string sql;
             SQLiteCommand command;
-            
             for (int i = 1; i < total_entries; i++)
             {
                 string tname, tcoll, texp, tphn;
