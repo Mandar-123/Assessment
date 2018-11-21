@@ -68,6 +68,7 @@ namespace Assessment
             }
             command = new SQLiteCommand(sql, m_dbConnection);
             command.ExecuteNonQuery();
+
             sql = "CREATE TABLE IF NOT EXISTS allocation (sid int, id int, assessor varchar(50), moderator varchar(50), allocated int, checked int, todayChecked int, moderated int, todayModerated int, PRIMARY KEY(sid, id), UNIQUE(sid, assessor));";
             command = new SQLiteCommand(sql, m_dbConnection);
             command.ExecuteNonQuery();

@@ -46,6 +46,13 @@ namespace Assessment
         {
             this.WindowState = FormWindowState.Maximized;
 
+            SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + mDbPath + ";Version=3;");
+            m_dbConnection.Open();
+
+            String sql = "CREATE TABLE IF NOT EXISTS faculty (id int, sid int, cORm varchar(50), name varchar(50), college varchar(200), exp varchar(50), phn varchar(50), PRIMARY KEY(sid, id, cORm), UNIQUE(sid, name, cORm));";
+            SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
+            command.ExecuteNonQuery();
+
             Label ltop = makeLabel(75, 40, 400, name + " (" + sem + " - " + branch + ")");
             ltop.Font = new Font("Arial", 11, FontStyle.Bold);
             this.Controls.Add(ltop);
@@ -63,6 +70,100 @@ namespace Assessment
             txtBoxStartPositionV += 30;
 
             load();
+        }
+
+        private void saveBut_Click(object sender, EventArgs e)
+        {
+            SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + mDbPath + ";Version=3;");
+            m_dbConnection.Open();
+
+            string sql;
+            SQLiteCommand command;
+            
+            for (int i = 1; i < total_entries; i++)
+            {
+                string tname, tcoll, texp, tphn;
+                TextBox txtBox1 = panel1.Controls["name_" + i.ToString()] as TextBox;
+                TextBox txtBox2 = panel1.Controls["coll_" + i.ToString()] as TextBox;
+                TextBox txtBox3 = panel1.Controls["exp_" + i.ToString()] as TextBox;
+                TextBox txtBox4 = panel1.Controls["phn_" + i.ToString()] as TextBox;
+
+                tname = txtBox1.Text;
+                tcoll = txtBox2.Text;
+                texp = txtBox3.Text;
+                tphn = txtBox4.Text;
+
+                if (tname == "")
+                {
+                    MessageBox.Show("Please Enter Faculty Name!", "Alert!");
+                    return;
+                }
+
+                if (tcoll == "")
+                {
+                    MessageBox.Show("Please Enter College Name!", "Alert!");
+                    return;
+                }
+                
+                sql = "UPDATE faculty SET name = '" + tname + "',  college = '" + tcoll + "', exp = '" + texp + "',  phn = '" + tphn + "' WHERE sid =" + sid + " AND id = " + i + " AND cORm = '" + cORm + "';";
+                command = new SQLiteCommand(sql, m_dbConnection);
+
+                try
+                {
+                    command.ExecuteNonQuery();
+                }
+                catch (System.Exception ex)
+                {
+                    if (ex.Message.Contains("UNIQUE"))
+                        MessageBox.Show("Faculty named '" + name + "' Already Exists!", "Alert!");
+                    m_dbConnection.Close();
+                    TextBox txtBox = panel1.Controls["ass_" + i.ToString()] as TextBox;
+                    txtBox.Focus();
+                    return;
+                }
+            }
+            m_dbConnection.Close();
+        }
+
+        private void addNew_Click(object sender, EventArgs e)
+        {
+            SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + mDbPath + ";Version=3;");
+            m_dbConnection.Open();
+
+            string name, college, experience, phone;
+            TextBox txtBox1 = newPanel.Controls["new_name"] as TextBox;
+            TextBox txtBox2 = newPanel.Controls["new_coll"] as TextBox;
+            TextBox txtBox3 = newPanel.Controls["new_exp"] as TextBox;
+            TextBox txtBox4 = newPanel.Controls["new_phn"] as TextBox;
+
+            name = txtBox1.Text;
+            college = txtBox2.Text;
+            experience = txtBox3.Text;
+            phone = txtBox4.Text;
+
+            string sql = "INSERT into faculty (id, sid, cORm, name, college, exp, phn) values (" + total_entries + ", " + sid + ", '" + cORm + "', '" + name + "', '" + college + "', '" + experience + "', '" +  phone + "');";
+
+            SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
+
+            try
+            {
+                command.ExecuteNonQuery();
+            }
+
+            catch (System.Exception ex)
+            {
+                if (ex.Message.Contains("UNIQUE"))
+                    MessageBox.Show("Faculty named '" + name + "' Already Exists!", "Alert!");
+                m_dbConnection.Close();
+                return;
+            }
+            new_name.Text = "";
+            new_coll.Text = "";
+            new_exp.Text = "";
+            new_phn.Text = "";
+            m_dbConnection.Close();
+            load();
+            saveBut_Click(sender, e);
         }
 
         public static TextBox makeBox(int xLoc, int yLoc, int xSize, string t, string name, bool enabled, bool isNumber)
@@ -103,7 +204,7 @@ namespace Assessment
             SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + mDbPath + ";Version=3;");
             m_dbConnection.Open();
 
-            string sql = "SELECT * FROM faculty where sid = " + sid + " AND id >= " + total_entries + " AND cORm == " + cORm + " ORDER BY id";
+            string sql = "SELECT * FROM faculty where sid = " + sid + " AND id >= " + total_entries + " AND cORm == '" + cORm + "' ORDER BY id";
             SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
             SQLiteDataReader reader = command.ExecuteReader();
 
@@ -126,7 +227,7 @@ namespace Assessment
 
             m_dbConnection.Close();
 
-            //newPanel.Location = new Point(0, txtBoxStartPositionV);
+            newPanel.Location = new Point(0, txtBoxStartPositionV);
         }
     }
 }
