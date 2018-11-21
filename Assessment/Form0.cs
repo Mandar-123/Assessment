@@ -202,7 +202,6 @@ namespace Assessment
             else
             {
                 button3.Enabled = true;
-                button1.Enabled = false;
                 totalToCheck.Enabled = false;
             }
                 

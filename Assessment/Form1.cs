@@ -25,7 +25,7 @@ namespace Assessment
         string sem;
         string mDbPath;
         string acedemicYear, exam, branch, cORm;
-        bool firstTime;
+
         public Form1(int sid, string name, string sem, string dbPath, string ay, string ex, string br, int ttc, string cm)
         {
             InitializeComponent();
@@ -42,7 +42,6 @@ namespace Assessment
             this.branch = br;
             this.total = ttc;
             this.cORm = cm;
-            this.firstTime = true;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -56,13 +55,45 @@ namespace Assessment
                 addFac.Text = "Add Moderators";
             }
 
-            string[] facultyArray = File.ReadAllLines(Application.StartupPath + "\\Assessors.txt", Encoding.UTF8);
+            SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + mDbPath + ";Version=3;");
+            m_dbConnection.Open();
+
+            String sql = "CREATE TABLE IF NOT EXISTS faculty (id int, sid int, cORm varchar(50), name varchar(50), college varchar(200), exp varchar(50), phn varchar(50), PRIMARY KEY(sid, id, cORm), UNIQUE(sid, name, cORm));";
+            SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
+            command.ExecuteNonQuery();
+
+            sql = "SELECT COUNT(id) AS count FROM faculty WHERE sid = " + sid + " AND cORm == 'Checking' ORDER BY id";
+            command = new SQLiteCommand(sql, m_dbConnection);
+
+            SQLiteDataReader reader1 = command.ExecuteReader();
+
+            int rows = 0;
+
+            while (reader1.Read())
+            {
+                rows = Int32.Parse(reader1["count"].ToString());
+            }
+
+            sql = "SELECT name FROM faculty WHERE sid = " + sid + " AND cORm == 'Checking' ORDER BY id";
+            command = new SQLiteCommand(sql, m_dbConnection);
+
+            SQLiteDataReader reader = command.ExecuteReader();
+
+            string[] facultyArray = new string[rows];
+
+            int titer = 0;
+            while (reader.Read())
+            {
+                string t_name = (string)reader["name"];
+                facultyArray[titer++] = t_name;
+            }
+
             Array.Sort(facultyArray);
             new_ass.Items.Add("--------- SELECT FACULTY --------");
             
             for (int iter = 0; iter < facultyArray.Length; iter++)
             {
-                if(facultyArray[iter] != "" )
+                if (facultyArray[iter] != "" )
                     new_ass.Items.Add(facultyArray[iter]);
             }
             new_ass.SelectedIndex = 0;
@@ -95,11 +126,9 @@ namespace Assessment
             else
                 panel1.Controls.Add(makeLabel(txtBoxStartPosition + 650 + 5 * d, txtBoxStartPositionV, 120, "Moderated Today"));
             txtBoxStartPositionV += 30;
-
-            SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + mDbPath + ";Version=3;");
-            m_dbConnection.Open();
-            string sql = "UPDATE subject SET total = " + total + " where id = " + sid + ";";
-            SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
+            
+            sql = "UPDATE subject SET total = " + total + " where id = " + sid + ";";
+            command = new SQLiteCommand(sql, m_dbConnection);
             command.ExecuteNonQuery();
             m_dbConnection.Close();
             load();
@@ -241,11 +270,14 @@ namespace Assessment
             sumT.Text = sumTodayChecked.ToString();
             rem.Text = "To be allocated: " + (total - sumAllocated).ToString();
             rem.Font = new Font("Arial", 11, FontStyle.Bold);
-            /*if (!firstTime)
-                MessageBox.Show("Saved!", "Alert!");
-            else
-                firstTime = false;
-            */
+
+            if (sender.GetType().ToString() == "System.Windows.Forms.Button") {
+                Button tempButt = (Button)sender;
+                if (tempButt.Text == "Save")
+                {
+                    MessageBox.Show("Saved!", "Alert!");
+                }
+            }
         }
 
         private void new_chkd_TextChanged(object sender, EventArgs e)
@@ -369,10 +401,14 @@ namespace Assessment
             sumAL.Text = sumAllocated.ToString();
             sumTML.Text = sumTodayModerated.ToString();
 
-            if (!firstTime)
-                MessageBox.Show("Saved!", "Alert!");
-            else
-                firstTime = false;
+            if (sender.GetType().ToString() == "System.Windows.Forms.Button")
+            {
+                Button tempButt = (Button)sender;
+                if (tempButt.Text == "Save")
+                {
+                    MessageBox.Show("Saved!", "Alert!");
+                }
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -385,7 +421,7 @@ namespace Assessment
 
         private void addFac_Click(object sender, EventArgs e)
         {
-            Form3 fr = new Form3(sid, name, sem, mDbPath, acedemicYear, exam, branch, cORm);
+            Form3 fr = new Form3(sid, name, sem, mDbPath, acedemicYear, exam, branch, cORm, total);
             this.Hide();
             fr.ShowDialog();
             this.Close();
@@ -488,18 +524,38 @@ namespace Assessment
         {
             SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=" + mDbPath + ";Version=3;");
             m_dbConnection.Open();
-            
-            string sql = "SELECT * FROM allocation where sid = " + sid + " AND id >= " + total_entries + " ORDER BY id";
-            SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
-            SQLiteDataReader reader = command.ExecuteReader();
 
-            string[] facultyArray = new string[1000];
-            string[] temp = File.ReadAllLines(Application.StartupPath + "\\Moderators.txt", Encoding.UTF8);
-            for (int it = 0; it < temp.Length; it++)
+            string sql = "SELECT COUNT(id) AS count FROM faculty WHERE sid = " + sid + " AND cORm == 'Moderation' ORDER BY id";
+            SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
+
+            SQLiteDataReader reader1 = command.ExecuteReader();
+
+            int rows = 0;
+
+            while (reader1.Read())
             {
-                facultyArray[it] = temp[it];
+                rows = Int32.Parse(reader1["count"].ToString());
             }
+
+            sql = "SELECT name FROM faculty WHERE sid = " + sid + " AND cORm == 'Moderation' ORDER BY id";
+            command = new SQLiteCommand(sql, m_dbConnection);
+
+            SQLiteDataReader reader2 = command.ExecuteReader();
+
+            string[] facultyArray = new string[rows];
+
+            int titer = 0;
+            while (reader2.Read())
+            {
+                string t_name = (string)reader2["name"];
+                facultyArray[titer++] = t_name;
+            }
+
             Array.Sort(facultyArray);
+            
+            sql = "SELECT * FROM allocation where sid = " + sid + " AND id >= " + total_entries + " ORDER BY id";
+            command = new SQLiteCommand(sql, m_dbConnection);
+            SQLiteDataReader reader = command.ExecuteReader();
 
             while (reader.Read())
             {

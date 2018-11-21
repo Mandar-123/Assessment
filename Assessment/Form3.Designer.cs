@@ -90,6 +90,7 @@
             this.new_exp.Name = "new_exp";
             this.new_exp.Size = new System.Drawing.Size(100, 25);
             this.new_exp.TabIndex = 2;
+            this.new_exp.TextChanged += new System.EventHandler(this.new_exp_TextChanged);
             // 
             // new_coll
             // 
@@ -116,6 +117,7 @@
             this.backBut.TabIndex = 5;
             this.backBut.Text = "Back";
             this.backBut.UseVisualStyleBackColor = false;
+            this.backBut.Click += new System.EventHandler(this.backBut_Click);
             // 
             // saveBut
             // 
