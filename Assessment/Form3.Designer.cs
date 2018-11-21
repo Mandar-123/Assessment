@@ -150,8 +150,6 @@
 
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel newPanel;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.TextBox new_name;
         private System.Windows.Forms.TextBox new_exp;
         private System.Windows.Forms.TextBox new_coll;

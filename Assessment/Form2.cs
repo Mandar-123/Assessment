@@ -21,17 +21,7 @@ namespace Assessment
             this.ex = exam;
             this.se = sem;
         }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            System.Diagnostics.Process.Start(Application.StartupPath + "\\Assessors.txt");
-        }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-            System.Diagnostics.Process.Start(Application.StartupPath + "\\Moderators.txt");
-        }
-
+        
         private void Form2_Load(object sender, EventArgs e)
         {
             this.WindowState = FormWindowState.Maximized;
@@ -40,9 +30,22 @@ namespace Assessment
             aySel.Items.Add("2020 - 2021");
             aySel.Items.Add("2021 - 2022");
             aySel.Items.Add("2022 - 2023");
-            aySel.SelectedItem = aced;
+            int currYear = DateTime.Today.Year;
+            int currMonth = DateTime.Today.Month;
+            string ay = "";
+            if (DateTime.Today.Month > 10)
+            {
+                ay = currYear.ToString() + " - " + (currYear + 1).ToString();
+            }
+            else {
+                ay = (currYear - 1).ToString() + " - " + currYear.ToString();
+            }
+
+            aySel.SelectedItem = ay;
+
             scSel.Items.Add("2016 - CBCS");
             scSel.SelectedIndex = 0;
+
             braSel.Items.Add("CMPN");
             braSel.Items.Add("INFT");
             braSel.Items.Add("ETRX");
@@ -54,15 +57,22 @@ namespace Assessment
             semSel.Items.Add("Sem 5");
             semSel.Items.Add("Sem 6");
             semSel.SelectedItem = se;
-            exSel.SelectedItem = ex;
         }
 
         private void aySel_SelectedIndexChanged(object sender, EventArgs e)
         {
+            int currYear = DateTime.Today.Year;
+            int currMonth = DateTime.Today.Month;
             exSel.Items.Clear();
             exSel.Items.Add("Dec " + aySel.Text.Substring(2, 2));
             exSel.Items.Add("May " + aySel.Text.Substring(9, 2));
-            exSel.SelectedIndex = 0;
+            if(currMonth == 11 || currMonth == 11 || currMonth == 1 || currMonth == 2 || currMonth == 3)
+            {
+                exSel.SelectedIndex = 0;
+            } else
+            {
+                exSel.SelectedIndex = 1;
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
