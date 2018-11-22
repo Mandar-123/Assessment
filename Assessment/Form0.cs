@@ -24,7 +24,7 @@ namespace Assessment
             this.acedemicYear = ay;
             this.exam = ex;
             this.branch = br;
-            this.mDbPath = Application.StartupPath + "\\Databases\\" + acedemicYear + "\\" + exam + "\\" + branch + "\\"+ se +"\\paperassessment.db";
+            this.mDbPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Assessment" + "\\Databases\\" + acedemicYear + "\\" + exam + "\\" + branch + "\\"+ se +"\\paperassessment.db";
         }
 
         private void Form0_Load(object sender, EventArgs e)
@@ -40,7 +40,7 @@ namespace Assessment
         {
             if (!File.Exists(mDbPath))
             {
-                string dir = Application.StartupPath + "\\Databases\\" + acedemicYear + "\\" + exam + "\\" + branch + "\\" + s;
+                string dir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Assessment" + "\\Databases\\" + acedemicYear + "\\" + exam + "\\" + branch + "\\" + s;
                 if (!Directory.Exists(dir))
                 {
                     Directory.CreateDirectory(dir);
@@ -142,7 +142,7 @@ namespace Assessment
         {
             int semest = s[4] - '0';
             string sql = "SELECT * FROM subjects WHERE dept = '"+ branch + "' AND sem = " + semest + " ORDER BY id;";
-            SQLiteConnection m_dbConnection1 = new SQLiteConnection("Data Source=" + Application.StartupPath + "\\subjects.db" + ";Version=3;");
+            SQLiteConnection m_dbConnection1 = new SQLiteConnection("Data Source=" + Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Assessment" + "\\subjects.db" + ";Version=3;");
             m_dbConnection1.Open();
             SQLiteCommand command1 = new SQLiteCommand(sql, m_dbConnection1);
             SQLiteDataReader reader = command1.ExecuteReader();
@@ -258,7 +258,7 @@ namespace Assessment
         {
             if(totalToCheck.Text == "" || Int32.Parse(totalToCheck.Text) == 0)
             {
-                MessageBox.Show("Please Enter the number of papers to be allocated");
+                MessageBox.Show("Please Enter the number of papers to be allocated", "Alert");
                 totalToCheck.Focus();
                 return;
             }

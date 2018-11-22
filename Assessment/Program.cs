@@ -11,7 +11,7 @@ namespace Assessment
 {
     static class Program
     {
-        static string mDbPath = Application.StartupPath +  "\\subjects.db";
+        static string mDbPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Assessment" + "\\subjects.db";
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -20,6 +20,12 @@ namespace Assessment
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            string tpath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Assessment\\";
+            if (!File.Exists(tpath))
+            {
+                Directory.CreateDirectory(tpath);
+            }
+
             if (!File.Exists(mDbPath))
             {
                 SQLiteConnection.CreateFile(mDbPath);
